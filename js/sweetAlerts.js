@@ -53,7 +53,7 @@ function bienvenida(usuario) {
     }).then(function (result) {
         if (result.value) {
             window.location.href = "index.php?action=menuPrincipal";
-        } else {}
+        } else { }
     });
 }
 
@@ -68,7 +68,7 @@ function errorAcceso(error) {
     }).then(function (result) {
         if (result.value) {
             window.location.href = "/COCINA%20MAMITAS/index.php";
-        } else {}
+        } else { }
     });
 
 }
@@ -77,13 +77,13 @@ $(document).ready(function () {
     $('#cerrar-modal').click(function (event) {
         window.location.href = document.getElementById("link").value;
     });
-    
-    const $selectorArchivo =  document.getElementById("foto_cat"),
-    $imagenPrevisualizacion = document.getElementById("img_previa");
+
+    const $selectorArchivo = document.getElementById("foto_cat"),
+        $imagenPrevisualizacion = document.getElementById("img_previa");
     //Escuchar cuando cambie
     $selectorArchivo.addEventListener("change", () => {
         const archivos = $selectorArchivo.files;
-        if(!archivos || !archivos.length){
+        if (!archivos || !archivos.length) {
             $imagenPrevisualizacion.src = "";
             return;
         }
@@ -94,144 +94,144 @@ $(document).ready(function () {
 
 })
 
-$(document).ready(function(){
-    
-    if($("#forma_pago_mesa").val() == 'Efectivo'){
-        $(".efectivo").css('display','none');
-        $(".tarjeta").css('display','none');
+$(document).ready(function () {
+
+    if ($("#forma_pago_mesa").val() == 'Efectivo') {
+        $(".efectivo").css('display', 'none');
+        $(".tarjeta").css('display', 'none');
         $("#imp_efectivo").val($("#total_venta_m").val());
         $("#imp_tarjeta").val("");
-    }else if($("#forma_pago_mesa").val() == 'Tarjeta'){
-        $(".tarjeta").css('display','none');
-        $(".efectivo").css('display','none');
+    } else if ($("#forma_pago_mesa").val() == 'Tarjeta') {
+        $(".tarjeta").css('display', 'none');
+        $(".efectivo").css('display', 'none');
         $("#imp_efectivo").val("");
         $("#imp_tarjeta").val($("#total_venta_m").val());
-    }else if($("#forma_pago_mesa").val() == 'Mixta'){
-        $(".tarjeta").css('display','block');
-        $(".efectivo").css('display','block');
+    } else if ($("#forma_pago_mesa").val() == 'Mixta') {
+        $(".tarjeta").css('display', 'block');
+        $(".efectivo").css('display', 'block');
         $("#imp_efectivo").val("");
         $("#imp_tarjeta").val("");
     }
 
-    $("#forma_pago_mesa").change(function(){
-        if($("#forma_pago_mesa").val() == 'Efectivo'){
-            $(".efectivo").css('display','none');
-            $(".tarjeta").css('display','none');
+    $("#forma_pago_mesa").change(function () {
+        if ($("#forma_pago_mesa").val() == 'Efectivo') {
+            $(".efectivo").css('display', 'none');
+            $(".tarjeta").css('display', 'none');
             $("#imp_efectivo").val($("#total_venta_m").val());
             $("#imp_tarjeta").val("");
-        }else if($("#forma_pago_mesa").val() == 'Tarjeta'){
-            $(".tarjeta").css('display','none');
-            $(".efectivo").css('display','none');
+        } else if ($("#forma_pago_mesa").val() == 'Tarjeta') {
+            $(".tarjeta").css('display', 'none');
+            $(".efectivo").css('display', 'none');
             $("#imp_efectivo").val("");
             $("#imp_tarjeta").val($("#total_venta_m").val());
-        }else if($("#forma_pago_mesa").val() == 'Mixta'){
-            $(".tarjeta").css('display','block');
-            $(".efectivo").css('display','block');
+        } else if ($("#forma_pago_mesa").val() == 'Mixta') {
+            $(".tarjeta").css('display', 'block');
+            $(".efectivo").css('display', 'block');
             $("#imp_efectivo").val("");
             $("#imp_tarjeta").val("");
         }
     });
 
-    $("#buscar_por").change(function(){
+    $("#buscar_por").change(function () {
         switch ($("#buscar_por").val()) {
             case 'estado_venta_m':
-                $("#estado_venta_m").css('display','flex');
-                $("#forma_pago_m").css('display','none');
-                $("#num_mesa").css('display','none');
-                $("#fecha_venta_m").css('display','none');   
-            break;
+                $("#estado_venta_m").css('display', 'flex');
+                $("#forma_pago_m").css('display', 'none');
+                $("#num_mesa").css('display', 'none');
+                $("#fecha_venta_m").css('display', 'none');
+                break;
             case 'forma_pago_m':
-                $("#estado_venta_m").css('display','none');
-                $("#forma_pago_m").css('display','flex');
-                $("#num_mesa").css('display','none');
-                $("#fecha_venta_m").css('display','none');   
-            break;
+                $("#estado_venta_m").css('display', 'none');
+                $("#forma_pago_m").css('display', 'flex');
+                $("#num_mesa").css('display', 'none');
+                $("#fecha_venta_m").css('display', 'none');
+                break;
             case 'num_mesa':
-                $("#estado_venta_m").css('display','none');
-                $("#forma_pago_m").css('display','none');
-                $("#num_mesa").css('display','flex');
-                $("#fecha_venta_m").css('display','none');   
-            break;
+                $("#estado_venta_m").css('display', 'none');
+                $("#forma_pago_m").css('display', 'none');
+                $("#num_mesa").css('display', 'flex');
+                $("#fecha_venta_m").css('display', 'none');
+                break;
             case 'fecha_venta_m':
-                $("#estado_venta_m").css('display','none');
-                $("#forma_pago_m").css('display','none');
-                $("#num_mesa").css('display','none');
-                $("#fecha_venta_m").css('display','flex');   
-            break;
+                $("#estado_venta_m").css('display', 'none');
+                $("#forma_pago_m").css('display', 'none');
+                $("#num_mesa").css('display', 'none');
+                $("#fecha_venta_m").css('display', 'flex');
+                break;
         }
     });
 
-    $("#btn_buscar").click(function() {
+    $("#btn_buscar").click(function () {
         switch ($("#buscar_por").val()) {
             case "estado_venta_m":
                 $.ajax({
-                    type:'post',
+                    type: 'post',
                     url: 'views/modules/Reportes/busquedaVentaMesas.php',
-                    data: {"columna": "estado_venta_m", "valor": $("#v_estado_venta_m").val(), "tipo":""}, 
-                    dataType: "html",     
-                    success: function(resp){      	      
-                      $('#tabla_ventas_mesas').html(resp);
+                    data: { "columna": "estado_venta_m", "valor": $("#v_estado_venta_m").val(), "tipo": "" },
+                    dataType: "html",
+                    success: function (resp) {
+                        $('#tabla_ventas_mesas').html(resp);
                     },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                    } 
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                    }
                 });
                 return false;
-            break;
+                break;
             case "forma_pago_m":
                 $.ajax({
-                    type:'post',
+                    type: 'post',
                     url: 'views/modules/Reportes/busquedaVentaMesas.php',
-                    data: {"columna": "forma_pago_m", "valor": $("#v_forma_pago_m").val(), "tipo":""},
-                    dataType: "html",     
-                    success: function(resp){      	      
-                      $('#tabla_ventas_mesas').html(resp);
+                    data: { "columna": "forma_pago_m", "valor": $("#v_forma_pago_m").val(), "tipo": "" },
+                    dataType: "html",
+                    success: function (resp) {
+                        $('#tabla_ventas_mesas').html(resp);
                     },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                    } 
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                    }
                 });
                 return false;
-            break;
+                break;
             case "num_mesa":
                 $.ajax({
-                    type:'post',
+                    type: 'post',
                     url: 'views/modules/Reportes/busquedaVentaMesas.php',
-                    data: {"columna": "id_mesa_venta_m", "valor": $("#v_id_mesa_venta_m").val(), "tipo": "int"}, 
-                    dataType: "html",     
-                    success: function(resp){      	      
-                      $('#tabla_ventas_mesas').html(resp);
+                    data: { "columna": "id_mesa_venta_m", "valor": $("#v_id_mesa_venta_m").val(), "tipo": "int" },
+                    dataType: "html",
+                    success: function (resp) {
+                        $('#tabla_ventas_mesas').html(resp);
                     },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                    } 
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                    }
                 });
                 return false;
-            break;
+                break;
             case "fecha_venta_m":
                 fecha_inicio = $("#v_fecha_venta_m_i").val();
                 fecha_termino = $("#v_fecha_venta_m_f").val();
                 $.ajax({
-                    type:'post',
+                    type: 'post',
                     url: 'views/modules/Reportes/busquedaVentaMesas.php',
-                    data: {"fecha_inicio": fecha_inicio, "fecha_termino": fecha_termino, "tipo": "fecha"}, 
-                    dataType: "html",     
-                    success: function(resp){      	      
-                      $('#tabla_ventas_mesas').html(resp);
-                      alert(resp);
+                    data: { "fecha_inicio": fecha_inicio, "fecha_termino": fecha_termino, "tipo": "fecha" },
+                    dataType: "html",
+                    success: function (resp) {
+                        $('#tabla_ventas_mesas').html(resp);
+                        alert(resp);
                     },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-                    } 
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus); alert("Error: " + errorThrown);
+                    }
                 });
                 return false;
-            break;
-      }
+                break;
+        }
     });
 
 });
 
-function salir(){
+function salir() {
     swal({
         title: "¿Deseas Cerrar Sesión?",
         text: "Estás por salir del sistema.",
@@ -243,30 +243,30 @@ function salir(){
         closeOnClickOutside: false,
         closeOnEsc: false,
         allowOutsideClick: false,
-    }).then(function(result) {
-            if (result.value) {
-                swal({
-                    title: "Adios",
-                    text: "Saliendo del sistema .....",
-                    type: "success",
-                    closeOnClickOutside: false,
-                    closeOnEsc: false,
-                    allowOutsideClick: false,
-                }).then(function(result) {
-                        if(result.value){
-                            location.href = "index.php?action=salir";
-                        }
-                    });
-            }else{
-                swal("No se ha cerrado sesión","Sigamos trabajando.","error");
-                delay(2000);
-            }
+    }).then(function (result) {
+        if (result.value) {
+            swal({
+                title: "Adios",
+                text: "Saliendo del sistema .....",
+                type: "success",
+                closeOnClickOutside: false,
+                closeOnEsc: false,
+                allowOutsideClick: false,
+            }).then(function (result) {
+                if (result.value) {
+                    location.href = "index.php?action=salir";
+                }
+            });
+        } else {
+            swal("No se ha cerrado sesión", "Sigamos trabajando.", "error");
+            delay(2000);
+        }
     });
 }
 
-function soloNumeros(e){
-	var key = window.Event ? e.which : e.keyCode
-	return ((key >= 48 && key <= 57) || (key==8))
+function soloNumeros(e) {
+    var key = window.Event ? e.which : e.keyCode
+    return ((key >= 48 && key <= 57) || (key == 8))
 }
 
 //Funcion para abrir ventana
@@ -275,52 +275,52 @@ function ventanaPopup(URL) {
     vp.focus();
 }
 
-function clickactionEliminar( b ){
-    document.getElementById('id_registro_borrar').value = b.id; 
+function clickactionEliminar(b) {
+    document.getElementById('id_registro_borrar').value = b.id;
     document.getElementById('os').innerHTML = b.dataset.valor + "?";
 }
 
-function cancelarPartida(a){
+function cancelarPartida(a) {
     $.ajax({
-        type:'post',
+        type: 'post',
         url: 'views/modules/Ventas/cancelarPartidaVentaCliente.php',
-        data: {"id_partida_venta_cliente": a.id, "estado_partida": "cancelado", "subtotal_partida": a.dataset.subtotal_p, "id_venta": a.dataset.id_venta, "total_venta": a.dataset.total_venta}, 
-        dataType: "html",     
-        success: function(resp){      	      
-            if(resp == "success")
+        data: { "id_partida_venta_cliente": a.id, "estado_partida": "cancelado", "subtotal_partida": a.dataset.subtotal_p, "id_venta": a.dataset.id_venta, "total_venta": a.dataset.total_venta },
+        dataType: "html",
+        success: function (resp) {
+            if (resp == "success")
                 window.location.reload();
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) { 
-            alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-        } 
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Status: " + textStatus); alert("Error: " + errorThrown);
+        }
     });
     return false;
 }
 
 
-function activarPartida(a){
+function activarPartida(a) {
     $.ajax({
-        type:'post',
+        type: 'post',
         url: 'views/modules/Ventas/cancelarPartidaVentaCliente.php',
-        data: {"id_partida_venta_cliente": a.id, "estado_partida": "pendiente", "subtotal_partida": a.dataset.subtotal_p, "id_venta": a.dataset.id_venta, "total_venta": a.dataset.total_venta}, 
-        dataType: "html",     
-        success: function(resp){      	      
-            if(resp == "success")
+        data: { "id_partida_venta_cliente": a.id, "estado_partida": "pendiente", "subtotal_partida": a.dataset.subtotal_p, "id_venta": a.dataset.id_venta, "total_venta": a.dataset.total_venta },
+        dataType: "html",
+        success: function (resp) {
+            if (resp == "success")
                 window.location.reload();
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) { 
-            alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-        } 
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Status: " + textStatus); alert("Error: " + errorThrown);
+        }
     });
     return false;
 }
 
-function EliminarPartida(b){
-    document.getElementById('id_registro_borrar').value = b.id; 
+function EliminarPartida(b) {
+    document.getElementById('id_registro_borrar').value = b.id;
     document.getElementById('os').innerHTML = b.dataset.valor + "?";
-    document.getElementById('id_venta').value = b.dataset.id_venta; 
-    document.getElementById('subtotal_p').value = b.dataset.subtotal_p; 
-    document.getElementById('total_venta').value = b.dataset.total_venta; 
+    document.getElementById('id_venta').value = b.dataset.id_venta;
+    document.getElementById('subtotal_p').value = b.dataset.subtotal_p;
+    document.getElementById('total_venta').value = b.dataset.total_venta;
 }
 
 function mostrarPass1() {
@@ -372,19 +372,19 @@ function preguntar(event) {
             });
         } else {
             swal({
-                title: "No se ha cobrado", 
-                text: "Sigamos trabajando", 
+                title: "No se ha cobrado",
+                text: "Sigamos trabajando",
                 type: "error",
                 timer: 2000
-            });       
+            });
         }
     });
 }
 
-function ventanaNueva(documento){
+function ventanaNueva(documento) {
     var id_venta_m = $("#id_venta_m").val();
     var id_mesa_venta_m = $("#id_mesa_venta_m").val();
-    window.open('index.php?action=ticket&id_venta_m='+id_venta_m+'&id_mesa='+id_mesa_venta_m,'nuevaVentana','width=350, height=600');
+    window.open('index.php?action=ticket&id_venta_m=' + id_venta_m + '&id_mesa=' + id_mesa_venta_m, 'nuevaVentana', 'width=350, height=600');
 }
 
 
@@ -404,20 +404,20 @@ function imprimir(event) {
     }).then(function (result) {
         if (result.value) {
             ticketCliente();
-        }else {
+        } else {
             swal({
-                title: "Cancelado", 
-                text: "Sigamos trabajando", 
+                title: "Cancelado",
+                text: "Sigamos trabajando",
                 type: "error",
                 timer: 2000
-            });       
+            });
         }
     });
 }
 
 
-function ticketCliente(documento){
+function ticketCliente(documento) {
     var id_venta_c = $("#id_venta_c").val();
     var id_cliente_venta_c = $("#id_cliente_venta_c").val();
-    window.open('index.php?action=ticketCliente&id_venta_c='+id_venta_c+'&id_cliente_venta_c='+id_cliente_venta_c,'Ticket Cliente','width=350, height=600');
+    window.open('index.php?action=ticketCliente&id_venta_c=' + id_venta_c + '&id_cliente_venta_c=' + id_cliente_venta_c, 'Ticket Cliente', 'width=350, height=600');
 }
