@@ -323,6 +323,13 @@ function EliminarPartida(b) {
     document.getElementById('total_venta').value = b.dataset.total_venta;
 }
 
+function clickactionPagar(b) {
+    document.getElementById('id_venta_cobrar').value = b.id;
+    document.getElementById('os').innerHTML = b.dataset.valor + "?";
+    document.getElementById('total_venta').value = b.dataset.total;    
+}
+
+
 function mostrarPass1() {
     var x = document.getElementById("pass1");
     if (x.type === "password") {
@@ -415,9 +422,16 @@ function imprimir(event) {
     });
 }
 
-
 function ticketCliente(documento) {
     var id_venta_c = $("#id_venta_c").val();
     var id_cliente_venta_c = $("#id_cliente_venta_c").val();
     window.open('index.php?action=ticketCliente&id_venta_c=' + id_venta_c + '&id_cliente_venta_c=' + id_cliente_venta_c, 'Ticket Cliente', 'width=350, height=600');
+}
+
+function corteDelDiaMesas(documento) {
+    window.open('index.php?action=corteDelDia', 'Corte Mesas', 'width=350, height=600');
+}
+
+function corteDelDiaClientes(documento) {
+    window.open('index.php?action=corteDelDiaClientes', 'Corte Clientes', 'width=350, height=600');
 }
