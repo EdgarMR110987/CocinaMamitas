@@ -922,6 +922,20 @@ class MvcController
 		return $respuesta;
 	}
 	
+	##METODO PARA OBTENER LAS PARTIDAS DE LAS VENTAS A MESAS DEL DIA 
+	#-----------------------------------------------
+	public static function obtenerPartidasVentasMesasGralController(){
+		$respuesta = Datos::obtenerPartidasVentasMesasGralModel("partida_venta_m");
+		return $respuesta;
+	}
+
+	##METODO PARA OBTENER LAS PARTIDAS DE LAS VENTAS A MESAS DEL DIA 
+	#-----------------------------------------------
+	public static function obtenerTotalPartidasVentasMesasGralController(){
+		$respuesta = Datos::obtenerTotalPartidasVentasMesasGralModel("partida_venta_m");
+		return $respuesta["total"];
+	}
+	
 
 
 		
