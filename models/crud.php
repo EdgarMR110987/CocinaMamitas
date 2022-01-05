@@ -394,7 +394,8 @@ class Datos extends Conexion{
 	public static function vistaVentasMesasModel($tabla){
 		$stmt = Conexion::conectar()->prepare("SELECT *, u1.usuario as vendedor, mesas.num_mesa as num_mesa FROM $tabla 
 				LEFT JOIN usuarios u1 ON u1.id_usuario = id_usuario_venta_m
-				LEFT JOIN mesas ON id_mesa = id_mesa_venta_m");	
+				LEFT JOIN mesas ON id_mesa = id_mesa_venta_m 
+				ORDER BY fecha_venta_m DESC");	
 		$stmt->execute();
 		return $stmt->fetchAll();
 		$stmt->close();
@@ -475,16 +476,17 @@ class Datos extends Conexion{
 	#-------------------------------------
 	public static function insertarPartidaVentaModel($datosModel, $tabla){
 		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla (id_venta_c_partida, id_producto_partida, 
-				cantidad_producto_partida, subtotal_partida, comentarios_partida, fecha_registro_partida, 
-				fecha_update_partida) VALUES (:id_venta_c_partida, :id_producto_partida, 
-				:cantidad_producto_partida, :subtotal_partida, :comentarios_partida, (SELECT NOW()), 
-				(SELECT NOW()))");	
+				cantidad_producto_partida, subtotal_partida, comentarios_partida, estado_partida,
+				fecha_registro_partida, fecha_update_partida) VALUES (:id_venta_c_partida, 
+				:id_producto_partida, :cantidad_producto_partida, :subtotal_partida, :comentarios_partida,
+				:estado_partida, (SELECT NOW()), (SELECT NOW()))");	
 
 		$stmt->bindParam(":id_venta_c_partida", $datosModel["id_venta_agregar_p"], PDO::PARAM_INT);
 		$stmt->bindParam(":id_producto_partida", $datosModel["id_prod_venta"], PDO::PARAM_INT);
 		$stmt->bindParam(":cantidad_producto_partida", $datosModel["cant_partida_v"], PDO::PARAM_INT);
 		$stmt->bindParam(":subtotal_partida", $datosModel["sub_total_venta"], PDO::PARAM_STR);
 		$stmt->bindParam(":comentarios_partida", $datosModel["comentarios_partida"], PDO::PARAM_STR);
+		$stmt->bindParam(":estado_partida", $datosModel["estado_partida"], PDO::PARAM_STR);
 		if($stmt->execute()){
 			return "success";
 		}else{
@@ -885,4 +887,147 @@ class Datos extends Conexion{
 		$stmt->close();
 	}
 
+	
+	public static function actualizarSaldoClienteModel($datosModel){
+		$update = Conexion::conectar()->prepare("UPDATE usuarios SET saldo_actual = :saldo_actual
+					WHERE id_usuario = :id_usuario");
+		$update->bindParam(":saldo_actual", $datosModel["saldo_actual"], PDO::PARAM_STR);
+		$update->bindParam(":id_usuario", $datosModel["id_usuario"], PDO::PARAM_INT);
+		if($update->execute()){
+			return "success";
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
+
+	//METODO PARA COBRAR UN CUENTA
+	public static function actualizarEstadoVentaClientePagadaModel($tabla, $datosModel){
+		$update = Conexion::conectar()->prepare("UPDATE $tabla SET estado_venta_c = 'pagada'
+					WHERE id_venta_c = :id_venta_c");
+		$update->bindParam(":id_venta_c", $datosModel["id_venta_c"], PDO::PARAM_INT);
+		if($update->execute()){
+			$actualizarPartidas = Conexion::conectar()->prepare("UPDATE partida_venta_c SET estado_partida = 'cobrado', 
+				fecha_update_partida = (SELECT NOW())
+				WHERE id_venta_c_partida = :id_venta_c_partida");
+			$actualizarPartidas->bindParam(":id_venta_c_partida", $datosModel["id_venta_c"], PDO::PARAM_INT);
+			$actualizarPartidas->execute();
+			return "success";			
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
+	
+
+	//PARTIDAS DE TODAS LAS VENTAS A CLIENTES AGRUPADAS PARA EL CORTE DE CAJA
+	public static function obtenerPartidasVentasClientesGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(cantidad_producto_partida) as cantidad, 
+				descripcion_p, precio_venta, sum(subtotal_partida) AS subtotal FROM $tabla 
+				LEFT JOIN productos ON id_producto = id_producto_partida
+				WHERE fecha_registro_partida >= :fecha_inicio_i AND
+					  fecha_registro_partida <= :fecha_termino_b 
+				GROUP BY descripcion_p");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetchAll();
+		$stmt->close();
+	}
+
+	//PARTIDAS DE TODAS LAS VENTAS A CLIENTES AGRUPADAS PARA EL CORTE DE CAJA
+	public static function obtenerTotalPartidasVentasClientesGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+				LEFT JOIN productos ON id_producto = id_producto_partida
+				WHERE
+
+					fecha_registro_partida >= :fecha_inicio_i
+				AND
+					fecha_registro_partida <= :fecha_termino_b");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetch();
+		$stmt->close();
+	}
+
+
+	//OBTENER EL TOTAL DE LAS CUENTAS COBRADAS A CLIENTES DE SALDOS ANTERIORES PARA EL CORTE DE CAJA
+	public static function obtenerTotalSaldosCobradosVentasClientesGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+				LEFT JOIN productos ON id_producto = id_producto_partida
+				WHERE
+					estado_partida = 'cobrado'
+				AND
+					fecha_update_partida >= :fecha_inicio_i
+				AND
+					fecha_update_partida <= :fecha_termino_b");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetch();
+		$stmt->close();
+	}
+
+	//TOTAL DE LAS VENTAS QUE SE PAGARON AL MOMENTO DE CLIENTES
+	public static function obtenerTotalCobradoVentasClientesDiaGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+				LEFT JOIN productos ON id_producto = id_producto_partida
+				WHERE
+					estado_partida = 'pagada'
+				AND
+					fecha_registro_partida >= :fecha_inicio_i
+				AND
+					fecha_registro_partida <= :fecha_termino_b");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetch();
+		$stmt->close();
+	}
+
+	//TOTAL DE LAS VENTAS A CUENTA DE CLIENTES
+	public static function obtenerTotalACuentaVentasClientesGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+			LEFT JOIN productos ON id_producto = id_producto_partida
+			WHERE
+				estado_partida = 'pendiente'
+			AND
+				fecha_registro_partida >= :fecha_inicio_i
+			AND
+				fecha_registro_partida <= :fecha_termino_b");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetch();
+		$stmt->close();
+	}
+
+	
+
+
+
+	
+	
+	
 }
