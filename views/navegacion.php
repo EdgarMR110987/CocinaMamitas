@@ -42,7 +42,7 @@
         Configuracion
     </a>
     
-    <a href="index.php?action=salir" class="navbar-brand">
+    <a href="#" onclick="salir()" class="navbar-brand">
         <span>
             <img class="img-auto" src="views/img/Exit.gif" alt="">
         </span>
