@@ -17,8 +17,8 @@
             <img src="<?php echo $parametro["ruta_logo"]; ?>" alt="Logotipo" width="200" height="150">
             <p class="centrado">
                 <br><?php echo $parametro["razon_social"];?>
-                <br>December 23, 2021, 12:31 pm                   <br>
-                   <span style="font-weight:bold;"># Mesa : <?php echo $_GET["id_mesa"] ?> -  # Venta : <?php echo $_GET["id_venta_m"] ?></span>
+                <br><?php echo  date("Y-m-d"); ?><br>
+                   <span style="font-weight:bold;">CORTE DE CAJA</span>
                    <br><span style="font-weight:bold;"> Mesero : <?php echo $venta["usuario"]; ?> </span>                   
             </p>
             <table>
