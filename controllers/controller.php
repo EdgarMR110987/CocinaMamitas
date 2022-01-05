@@ -528,8 +528,7 @@ class MvcController
 	#VISTA DE VENTAS A MESAS 
 	#------------------------------------
 
-	public static function vistaVentasMesasController()
-	{
+	public static function vistaVentasMesasController(){
 		$respuesta = Datos::vistaVentasMesasModel("venta_mesa");
 		return $respuesta;
 	}
@@ -582,7 +581,7 @@ class MvcController
 
 			$url = "index.php?action=Ventas/editarVentaCliente&id_venta_editar=" . $_POST["id_venta_agregar_p"];
 
-			if ($respuesta == "success") {
+			if ($actualizarTotal == "success") {
 
 				echo "<script>
                         registroOK('" . $url . "');
@@ -604,32 +603,43 @@ class MvcController
 			$datos = array("id_producto" => $_POST["id_prod_venta"]);
 			$precio_unitario = Datos::obtenerPrecioProductoModel("productos", $datos);
 			$sub_total_venta = ($precio_unitario["precio_venta"] * $_POST["cant_partida_v"]);
-
+			if($_POST["estado_venta_c"] == "pagada")
+				$estado_partida = "pagada";
+			else
+				$estado_partida = "pendiente";
 			$datosController = array(
 				"cant_partida_v" => $_POST["cant_partida_v"],
 				"id_prod_venta" => $_POST["id_prod_venta"],
 				"id_venta_agregar_p" => $_POST["id_venta_agregar_p"],
 				"sub_total_venta" => $sub_total_venta,
+				"estado_partida" => $estado_partida,
 				"comentarios_partida" => $_POST["comentarios_partida"]
 			);
 
 			$respuesta = Datos::insertarPartidaVentaModel($datosController, "partida_venta_c");
 
 			$total = Datos::obtenerTotalVentaClienteModel($_POST["id_venta_agregar_p"]);
+			$estado_venta_cliente = $total["forma_pago_venta_c"];
+			$id_cliente_venta_c = $total["id_cliente_venta_c"];
+			if($estado_venta_cliente == "cuenta"){
+				$saldo_anterior = Datos::editarUsuarioModel($id_cliente_venta_c, "usuarios");
+				$nvo_saldo = ($saldo_anterior["saldo_actual"] + $sub_total_venta);
+				$datosUpdate = array("saldo_actual" => $nvo_saldo, "id_usuario" => $id_cliente_venta_c);
+				$actualizarTotal = Datos::actualizarSaldoClienteModel($datosUpdate);
+			}
 			$nvo_total = ($total["total_venta_c"] + $sub_total_venta);
 			$datosUpdate = array("total_venta" => $nvo_total, "id_venta" => $_POST["id_venta_agregar_p"]);
 			$actualizarTotal = Datos::actualizarVentaClienteModel($datosUpdate);
 
 			$url = "index.php?action=Ventas/agregarProductoVentaCliente";
 
-			if ($respuesta == "success") {
-
+			if ($actualizarTotal == "success") {
 				echo "<script>
                         registroOK('" . $url . "');
                     </script>";
 			} else {
 				echo "<script> 
-                            errorRegistro('" . $respuesta[2] . "','" . $url . "');
+                            errorRegistro('" . $actualizarTotal[2] . "','" . $url . "');
                     </script>";
 			}
 		}
@@ -936,7 +946,69 @@ class MvcController
 		return $respuesta["total"];
 	}
 	
+	public static function cobrarVentaClienteController($tabla, $url){
+		if(isset($_POST["id_venta_cobrar"])){
+			$datosControllerVenta = array("id_venta_c" => $_POST["id_venta_cobrar"]);
+			$respuesta = Datos::actualizarEstadoVentaClientePagadaModel($tabla, $datosControllerVenta);
 
+			$saldo_anterior = Datos::editarUsuarioModel($_POST["id_usuario"], "usuarios");
+			$nvo_saldo = ($saldo_anterior["saldo_actual"] - $_POST["total_venta"]);
+			$datosUpdate = array("saldo_actual" => $nvo_saldo, "id_usuario" => $_POST["id_usuario"]);
+			$actualizarTotal = Datos::actualizarSaldoClienteModel($datosUpdate);
+			
+			if ($respuesta == "success") {
+				echo "<script>
+						actualizarOK('" . $url . "');
+					</script>";
+			} else {
+				echo "<script> 
+						errorRegistro('" . $respuesta[2] . "','" . $url . "');
+					</script>";
+			}
+
+		}
+	}
+
+
+	##METODO PARA OBTENER LAS PARTIDAS DE LAS VENTAS A MESAS DEL DIA 
+	#-----------------------------------------------
+	public static function obtenerPartidasVentasClientesGralController(){
+		$respuesta = Datos::obtenerPartidasVentasClientesGralModel("partida_venta_c");
+		return $respuesta;
+	}
+	
+	#METODO PARA OBTENER LAS PARTIDAS DE LAS VENTAS A CLIENTES DEL DIA
+	#-----------------------------------------------
+	public static function obtenerTotalPartidasVentasClientesGralController(){
+		$respuesta = Datos::obtenerTotalPartidasVentasClientesGralModel("partida_venta_c");
+		return $respuesta["total"];
+	}
+
+	#METODO PARA OBTENER EL TOTAL DE LO QUE SE LES COBRO A LOS CLIENTES DE CUENTAS PASADAS
+	#-----------------------------------------------
+	public static function obtenerTotalSaldosCobradosVentasClientesGralController(){
+		$respuesta = Datos::obtenerTotalSaldosCobradosVentasClientesGralModel("partida_venta_c");
+		return $respuesta["total"];
+	}
+
+	#METODO PARA OBTENER EL TOTAL DE LO QUE SE LES COBRO A LOS CLIENTES DE CUENTAS PASADAS
+	#-----------------------------------------------
+	public static function obtenerTotalCobradoVentasClientesDiaGralController(){
+		$respuesta = Datos::obtenerTotalCobradoVentasClientesDiaGralModel("partida_venta_c");
+		return $respuesta["total"];
+	}
+
+	#METODO PARA OBTENER EL TOTAL DE LO QUE SE LES COBRO A LOS CLIENTES DE CUENTAS PASADAS
+	#-----------------------------------------------
+	public static function obtenerTotalACuentaVentasClientesGralController(){
+		$respuesta = Datos::obtenerTotalACuentaVentasClientesGralModel("partida_venta_c");
+		return number_format($respuesta["total"],"2",".",",");
+	}
+	
+	
+
+
+	
 
 		
 }
