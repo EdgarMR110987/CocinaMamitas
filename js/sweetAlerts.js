@@ -81,16 +81,18 @@ $(document).ready(function () {
     const $selectorArchivo = document.getElementById("foto_cat"),
         $imagenPrevisualizacion = document.getElementById("img_previa");
     //Escuchar cuando cambie
-    $selectorArchivo.addEventListener("change", () => {
-        const archivos = $selectorArchivo.files;
-        if (!archivos || !archivos.length) {
-            $imagenPrevisualizacion.src = "";
-            return;
-        }
-        const primerArchivo = archivos[0];
-        const objectURL = URL.createObjectURL(primerArchivo);
-        $imagenPrevisualizacion.src = objectURL;
-    });
+    if($selectorArchivo){
+        $selectorArchivo.addEventListener("change", () => {
+            const archivos = $selectorArchivo.files;
+            if (!archivos || !archivos.length) {
+                $imagenPrevisualizacion.src = "";
+                return;
+            }
+            const primerArchivo = archivos[0];
+            const objectURL = URL.createObjectURL(primerArchivo);
+            $imagenPrevisualizacion.src = objectURL;
+        });
+    }
 
 })
 
@@ -398,19 +400,20 @@ function ventanaNueva(documento) {
 function imprimir(event) {
     event.preventDefault();
     swal({
-        title: "Deseas Imprimir el ticket?",
+        title: "¿Deseas Imprimir el ticket?",
         text: "",
         type: "warning",
         showCancelButton: true,
         cancelButtonText: "Cancelar",
         confirmButtonColor: "#198754",
-        confirmButtonText: "Imrpimir",
+        confirmButtonText: "Imprimir",
         closeOnClickOutside: false,
         closeOnEsc: false,
         allowOutsideClick: false,
     }).then(function (result) {
         if (result.value) {
             ticketCliente();
+            location.href = "index.php?action=menuPrincipal";
         } else {
             swal({
                 title: "Cancelado",
@@ -433,5 +436,5 @@ function corteDelDiaMesas(documento) {
 }
 
 function corteDelDiaClientes(documento) {
-    window.open('index.php?action=corteDelDiaClientes', 'Corte Clientes', 'width=350, height=600');
+    window.open('index.php?action=corteCajaClientes', 'Corte Clientes', 'width=350, height=600');
 }
