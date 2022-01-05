@@ -5,21 +5,25 @@
 </script>
 
 <?php
+	$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+    $fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+    $fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+    $fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO  
     $partidas = new MvcController();
-    $valores = $partidas->obtenerPartidasVentaMesaTicketController($_GET["id_venta_m"]);
+    $valores = $partidas->obtenerPartidasVentasMesasGralController();
     $parametros = new MvcController();   
     $parametro = $parametros->obtenerParametrosController();
-    $ventas = new MvcController();   
-    $venta = $ventas->vistaVentaMesaTicketController($_GET["id_venta_m"]);
 ?>
 
 <div class="ticket">
             <img src="<?php echo $parametro["ruta_logo"]; ?>" alt="Logotipo" width="200" height="150">
             <p class="centrado">
                 <br><?php echo $parametro["razon_social"];?>
-                <br><?php echo  date("Y-m-d"); ?><br>
-                   <span style="font-weight:bold;">CORTE DE CAJA</span>
-                   <br><span style="font-weight:bold;"> Mesero : <?php echo $venta["usuario"]; ?> </span>                   
+                <br>
+                <br>
+                <span style="font-weight:bold;">CORTE DE CAJA A MESAS</span>
+                <br><?php echo "A : - " . $fecha_inicio_i ?>
+                <br><?php echo "C : - " . $fecha_termino_b ?>
             </p>
             <table>
                 <thead>
@@ -46,32 +50,9 @@
             <br>
             <br>
             <center>
-                <?php if($venta["forma_pago_m"] <> "Mixta"){?>
-                    <div class="row">
-                        <div class="col p-2">
-                            <span style="font-weight:bold;">FORMA DE PAGO : <?php echo $venta["forma_pago_m"]; ?></span>
-                        </div>
-                    </div>
-                <?php }else{?>
-                    <div class="row">
-                        <div class="col p-2">
-                            <span style="font-weight:bold;">FORMA DE PAGO : <?php echo $venta["forma_pago_m"]; ?></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col p-2">
-                            <span style="font-weight:bold;">EFECTIVO : $<?php echo  number_format($venta["imp_efectivo"],2,'.',','); ?></span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col p-2">
-                            <span style="font-weight:bold;">TARJETA : $<?php echo  number_format($venta["imp_tarjeta"],2,'.',','); ?></span>
-                        </div>
-                    </div>
-                <?php }?>
                 <div class="row">
                     <div class="col">
-                        <span style="font-weight:bold;">TOTAL : $ <?php echo number_format($venta["total_venta_m"],2,'.',','); ?></span>        
+                        <span style="font-weight:bold;">TOTAL VENTAS MESAS : $ <?php echo $parametros->obtenerTotalPartidasVentasMesasGralController(); ?></span>        
                     </div>
                 </div>
                 <div class="row">
