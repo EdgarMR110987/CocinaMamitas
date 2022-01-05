@@ -16,8 +16,12 @@
 <div class="ticket">
             <img src="<?php echo $parametro["ruta_logo"]; ?>" alt="Logotipo" width="200" height="150">
             <p class="centrado">
-                <br><?php echo $parametro["razon_social"];?>
-                <br>December 23, 2021, 12:31 pm                   <br>
+            <br> <span style="font-weight:bold;"><?php echo $parametro["razon_social"];?></span>
+            <br><?php echo $parametro["direccion"];?>
+            <br><?php echo $parametro["direccion_2"];?>
+            <br>
+            <br>
+            <br>December 23, 2021, 12:31 pm                   <br>
                    <span style="font-weight:bold;"># Mesa : <?php echo $_GET["id_mesa"] ?> -  # Venta : <?php echo $_GET["id_venta_m"] ?></span>
                    <br><span style="font-weight:bold;"> Mesero : <?php echo $venta["usuario"]; ?> </span>                   
             </p>

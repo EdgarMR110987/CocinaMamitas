@@ -35,7 +35,9 @@
                 <span >Cant. : </span>
             </div>
             <div class="col-md-1 izquierda">
-                <input type="hidden" name="id_venta_agregar_p" value="<?php echo $ultimo_registro_c["id_venta_c"]; ?>">
+                <input type="hidden" name="id_venta_agregar_p" id="id_venta_c" value="<?php echo $ultimo_registro_c["id_venta_c"]; ?>">
+                <input type="hidden" id="id_cliente_venta_c" value="<?php echo $ultimo_registro_c["id_usuario"]; ?>">
+                <input type="hidden" name="estado_venta_c" value="<?php echo $ultimo_registro_c["estado_venta_c"]; ?>">
                 <input class="input-form" min="1" value="1" type="number" name="cant_partida_v" id="cant_partida_v">
             </div>
             <div class="col-md-4">                
@@ -115,4 +117,46 @@
         ?>
     </div>
 
-    </form>
+ 
+ <!-- MODAL PARA ELIMINAR -->
+ <form class="form" action="" method="post">
+    <div id="openModalEliminar" class="modalDialog">
+        <div class="preguntar">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Borrando Producto</h5>
+                <a href="#close" title="Close" class="close">X</a>
+                <input type="hidden" name="id_registro_borrar" id="id_registro_borrar">
+                <input type="hidden" name="id_venta" id="id_venta">
+                <input type="hidden" name="subtotal_p" id="subtotal_p">
+                <input type="hidden" name="total_venta" id="total_venta">
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>¿Deseas Eliminar el Producto : &nbsp;</h6>
+                        <h6 id="os"></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cerrar-modal">Salir</button>
+                <input class="btn btn-danger" type="submit" value="ELIMINAR">
+            </div>
+        </div>
+    </div>
+
+
+<!-- TERMINA EL MODAL PARA ELIMINAR -->
+
+<?php 
+    $eliminar = new MvcController();
+    $link = "index.php?action=Ventas/agregarProductoVentaCliente";
+    $eliminar -> borrarRegistroController("partida_venta_c","id_partida_venta_c", $link);
+?>
+</form>
+
+<div class="row">
+    <div class="col-md-2 centrar">
+        <input type="button" onclick="imprimir(event)" class="btn btn-outline-info btn-lg" value="Imprimir">
+    </div> 
+</div>

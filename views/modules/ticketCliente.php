@@ -16,8 +16,11 @@
 <div class="ticket">
             <img src="<?php echo $parametro["ruta_logo"]; ?>" alt="Logotipo" width="200" height="150">
             <p class="centrado">
-                <br><?php echo $parametro["razon_social"];?>
-                <br><?php echo $venta["fecha_venta_c"];?><br>
+                <br><span style="font-weight:bold;"><?php echo $parametro["razon_social"];?></span>
+                <br><?php echo $parametro["direccion"];?>
+                <br><?php echo $parametro["direccion_2"];?>
+                <br>
+                <br><?php echo "Fecha : " . $venta["fecha_venta_c"];?><br>
                    <span style="font-weight:bold;"># Cliente : <?php echo $venta["cliente"]; ?> -  # Venta : <?php echo $_GET["id_venta_c"] ?></span>
                    <br><span style="font-weight:bold;"> Mesero : <?php echo $venta["mesero"]; ?> </span>                   
             </p>
@@ -82,3 +85,9 @@
                 </div>
             </center>
         </div>
+
+<script>
+    $(document).ready(function(){
+        $("#footer").css("visibility","hidden");
+    });
+</script>

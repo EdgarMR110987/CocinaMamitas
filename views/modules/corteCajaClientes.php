@@ -10,7 +10,7 @@
     $fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
     $fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO  
     $partidas = new MvcController();
-    $valores = $partidas->obtenerPartidasVentasMesasGralController();
+    $valores = $partidas->obtenerPartidasVentasClientesGralController();
     $parametros = new MvcController();   
     $parametro = $parametros->obtenerParametrosController();
 ?>
@@ -18,12 +18,12 @@
 <div class="ticket">
             <img src="<?php echo $parametro["ruta_logo"]; ?>" alt="Logotipo" width="200" height="150">
             <p class="centrado">
-                <br> <span style="font-weight:bold;"><?php echo $parametro["razon_social"];?></span>
+            <br> <span style="font-weight:bold;"><?php echo $parametro["razon_social"];?></span>
                 <br><?php echo $parametro["direccion"];?>
                 <br><?php echo $parametro["direccion_2"];?>
                 <br>
                 <br>
-                <span style="font-weight:bold;">CORTE DE CAJA A MESAS</span>
+                <span style="font-weight:bold;">CORTE DE CAJA CLIENTES</span>
                 <br><?php echo "A : - " . $fecha_inicio_i ?>
                 <br><?php echo "C : - " . $fecha_termino_b ?>
             </p>
@@ -54,9 +54,33 @@
             <center>
                 <div class="row">
                     <div class="col">
-                        <span style="font-weight:bold;">TOTAL VENTAS MESAS : $ <?php echo $parametros->obtenerTotalPartidasVentasMesasGralController(); ?></span>        
+                        <span>INGRESO DE SALDOS : $ <?php echo $parametros->obtenerTotalSaldosCobradosVentasClientesGralController(); ?></span>        
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col">
+                        <span>TOTAL COBRADO DÍA : $ <?php echo $parametros->obtenerTotalCobradoVentasClientesDiaGralController(); ?></span>        
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <span style="font-weight:bold;">TOTAL DE INGRESOS : $ <?php echo number_format($parametros->obtenerTotalSaldosCobradosVentasClientesGralController() + $parametros->obtenerTotalCobradoVentasClientesDiaGralController(),"2",".",","); ?></span>        
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <span style="font-weight:bold;">A CUENTA DEL DÍA : $ <?php echo $parametros->obtenerTotalACuentaVentasClientesGralController(); ?></span>        
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <span style="font-weight:bold; font-size:15px;">TOTAL VENTA CLIENTES : $<?php echo number_format($parametros->obtenerTotalPartidasVentasClientesGralController(),"2",".",","); ?></span>        
+                    </div>
+                </div>
+                <hr>
                 <div class="row">
                     <div class="col p-2">
                         <span style="font-size: 40px; font-weight:bold; text-transform: uppercase;"></span>
