@@ -846,4 +846,43 @@ class Datos extends Conexion{
 	}
 
 
+	
+	//PARTIDAS DE TODAS LAS VENTAS A MESAS AGRUPADAS PARA EL CORTE DE CAJA
+	public static function obtenerPartidasVentasMesasGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(cantidad_producto_partida_m) as cantidad, 
+				descripcion_p, precio_venta, sum(subtotal_partida_m) AS subtotal FROM $tabla 
+				LEFT JOIN productos ON id_producto = id_producto_partida_m
+				WHERE fecha_registro_partida_m >= :fecha_inicio_i AND
+					  fecha_registro_partida_m <= :fecha_termino_b 
+				GROUP BY descripcion_p");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetchAll();
+		$stmt->close();
+	}
+
+	//PARTIDAS DE TODAS LAS VENTAS A MESAS AGRUPADAS PARA EL CORTE DE CAJA
+	public static function obtenerTotalPartidasVentasMesasGralModel($tabla){
+		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida_m) AS total FROM $tabla 
+				LEFT JOIN productos ON id_producto = id_producto_partida_m
+				WHERE
+					fecha_registro_partida_m >= :fecha_inicio_i
+				AND
+					fecha_registro_partida_m <= :fecha_termino_b");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetch();
+		$stmt->close();
+	}
+
 }
