@@ -66,6 +66,9 @@ $respuesta = $editar -> editarUsuarioController();
                 <input type="checkbox" onclick="mostrarPass2()">👁
             </div>
         </div>
+        <?php 
+        if($_SESSION["perfil"] == "administrador"){
+        ?>
         <div class="row">
             <div class="col-md-2 derecha mb-3">
                 <span>Saldo Actual : </span>
@@ -84,4 +87,15 @@ $respuesta = $editar -> editarUsuarioController();
 </div>
 <?php 
     $editar -> actualizarUsuarioController();
+}else{?>
+    <div class="row">
+    <div class="col mt-3 centrar">
+        <input type="submit" class="btn-update" value="Actualizar">
+    </div>
+</div>
+</form>
+</div>
+<?php
+ $editar -> actualizarUsuarioCajeroController();
+}
 ?>
