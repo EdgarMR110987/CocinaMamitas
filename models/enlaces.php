@@ -32,6 +32,25 @@ class Paginas{
             return $module;
         }
     }
+
+    public static function enlacesPaginasClienteModel($enlaces){
+        if(isset($_SESSION["autentificado"]) == "SI"){
+		    if($enlaces == "Clientes/listadoVentasCliente" || $enlaces == "Clientes/detalleVentaCliente"){
+			    $module =  "views/modules/".$enlaces.".php";
+            }else if($enlaces == "index"){
+	    		$module =  "views/modules/Clientes/listadoVentasCliente";
+            }else if($enlaces == "salir"){
+                $module =  "views/modules/logout.php";
+            }  else{
+                $module =  "index.php";    
+            }
+		    return $module;
+	    }else{
+            $module =  "views/modules/acceso.php";
+            return $module;
+        }
+    }
+
 }
 
 
