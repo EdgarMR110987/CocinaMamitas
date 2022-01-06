@@ -57,6 +57,22 @@ function bienvenida(usuario) {
     });
 }
 
+function bienvenidaCliente(usuario) {
+    swal({
+        title: "Acceso Exitoso!",
+        text: "Bienvenido : " + usuario,
+        type: "success",
+        closeOnClickOutside: false,
+        closeOnEsc: false,
+        allowOutsideClick: false
+    }).then(function (result) {
+        if (result.value) {
+            window.location.href = "index.php?action=Clientes/listadoVentasCliente";
+        } else { }
+    });
+}
+
+
 function errorAcceso(error) {
     swal({
         title: "Acceso Denegado!",
