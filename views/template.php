@@ -37,8 +37,22 @@
                     echo "</section>";
                     include "footer.php";
                     break;
-                case "paciente";
-                    break;
+                case "cajero";
+                    if (isset($_SESSION["id_usuario"]))
+                    include "views/navegacion.php";
+                    $mvc = new MvcController();
+                    $mvc->enlacesPaginasController();
+                    echo "</section>";
+                    include "footer.php";
+                break;
+                case "cliente";
+                    if (isset($_SESSION["id_usuario"]))
+                    include "views/navegacionCliente.php";
+                    $mvc = new MvcController();
+                    $mvc->enlacesPaginasClienteController();
+                    echo "</section>";
+                    include "footer.php";
+                break;
             }
         } else {
             $mvc = new MvcController();
