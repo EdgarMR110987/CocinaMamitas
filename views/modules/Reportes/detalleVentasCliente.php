@@ -83,7 +83,7 @@
     </div>
 
 
-<!-- TERMINA EL MODAL PARA ELIMINAR -->
+<!-- TERMINA EL MODAL PARA COBRAR LA CUENTA DEL CLIENTE -->
 
 <?php 
     $eliminar = new MvcController();
