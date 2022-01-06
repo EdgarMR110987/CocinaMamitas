@@ -6,18 +6,18 @@
 
 <?php
 	$hora_actual = date("H");
-    if(intval($hora_actual) >= 0 && intval($hora_actual) <= 17){
+    if(intval($hora_actual) >= 00 && intval($hora_actual) <= 07){
         $fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
         $fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
         $fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
         $fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-        $fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+        $fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
 
     }else{
         $fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
         $fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
         $fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-        $fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO      
+        $fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO      
     }
 	
     $partidas = new MvcController();
@@ -35,8 +35,8 @@
                 <br>
                 <br>
                 <span style="font-weight:bold;">CORTE DE CAJA A MESAS</span>
-                <br><?php echo "A : - " . $fecha_inicio_i ?>
-                <br><?php echo "C : - " . $fecha_termino_b ?>
+                <br><?php echo "Apertura : " . $fecha_inicio_i ?>
+                <br><?php echo "Cierre : " . $fecha_termino_b ?>
             </p>
             <table>
                 <thead>
