@@ -24,6 +24,19 @@ class MvcController
 		include $respuesta;
 	}
 
+	#ENLACES DE LOS CLIENTES PARA SU ACCESO
+	#----------------------------------------
+	public function enlacesPaginasClienteController(){
+		if (isset($_GET['action'])) {
+			$enlaces = $_GET['action'];
+		} else {
+			$enlaces = "index";
+		}
+		$respuesta = Paginas::enlacesPaginasClienteModel($enlaces);
+		include $respuesta;
+	}
+	
+
 	#REGISTRO DE USUARIOS
 	#------------------------------------
 	public static function registroUsuarioController()
@@ -66,9 +79,15 @@ class MvcController
 				$_SESSION["perfil"] = $respuesta["perfil"];
 				$_SESSION["saldo_actual"] = $respuesta["saldo_actual"];
 				$_SESSION["timeout"] = time();
-				echo "<script>
-						bienvenida('" . $respuesta["usuario"] . "');
-					</script>";
+				if($_SESSION["perfil"] == "cliente"){
+					echo "<script>
+							bienvenidaCliente('" . $respuesta["usuario"] . "');
+						</script>";
+				}else{
+					echo "<script>
+							bienvenida('" . $respuesta["usuario"] . "');
+						</script>";
+				}
 			} else {
 				echo "<script>errorAcceso();</script>";
 			}
@@ -124,10 +143,9 @@ class MvcController
 		return $respuesta;
 	}
 
-	#ACTUALIZAR USUARIO
+	#ACTUALIZAR USUARIO PERFIL ADMINISTRADOR
 	#------------------------------------
-	public static function actualizarUsuarioController()
-	{
+	public static function actualizarUsuarioController(){
 		if (isset($_POST["id_usuario"])) {
 			$datosController = array(
 				"id_usuario" => $_POST["id_usuario"],
@@ -149,6 +167,30 @@ class MvcController
 			}
 		}
 	}
+
+#ACTUALIZAR USUARIO PERFIL ADMINISTRADOR
+	#------------------------------------
+	public static function actualizarUsuarioCajeroController(){
+		if (isset($_POST["id_usuario"])) {
+			$datosController = array(
+				"id_usuario" => $_POST["id_usuario"],
+				"usuario" => $_POST["usuario"],
+				"contrasena" => $_POST["contrasena"]);
+			$respuesta = Datos::actualizarUsuarioCajeroModel($datosController, "usuarios");
+			$url = "index.php?action=Usuarios/listadoUsuarios";
+			if ($respuesta == "success") {
+				echo "<script>
+                        actualizarOK('" . $url . "');
+                    </script>";
+			} else {
+				echo "<script> 
+                        errorRegistro('" . $respuesta[2] . "','" . $url . "');
+                    </script>";
+			}
+		}
+	}
+
+	
 
 	#REGISTRO DE MESA
 	#------------------------------------
@@ -946,6 +988,9 @@ class MvcController
 		return $respuesta["total"];
 	}
 	
+	#METODO PARA COBRAR UNA VENTA A CUENTA DE UN CLIENTE
+	#SE ACTUALIZA EL SALDO DEL CLIENTE
+	#--------------------------------------------------------------------------
 	public static function cobrarVentaClienteController($tabla, $url){
 		if(isset($_POST["id_venta_cobrar"])){
 			$datosControllerVenta = array("id_venta_c" => $_POST["id_venta_cobrar"]);
@@ -955,17 +1000,19 @@ class MvcController
 			$nvo_saldo = ($saldo_anterior["saldo_actual"] - $_POST["total_venta"]);
 			$datosUpdate = array("saldo_actual" => $nvo_saldo, "id_usuario" => $_POST["id_usuario"]);
 			$actualizarTotal = Datos::actualizarSaldoClienteModel($datosUpdate);
-			
 			if ($respuesta == "success") {
-				echo "<script>
-						actualizarOK('" . $url . "');
-					</script>";
+				echo '<script>
+						var x = document.getElementById("openModalPagar");
+						x.style.display = "none";    
+						actualizarOK(' . "'" . $url . "'" . ');
+					  </script>';
 			} else {
-				echo "<script> 
-						errorRegistro('" . $respuesta[2] . "','" . $url . "');
-					</script>";
+				echo '<script> 
+						var x = document.getElementById("openModalPagar");
+						x.style.display = "none";   
+						errorRegistro(' . "'" . $respuesta[2] . "','" . $url . "'" . '); 
+					</script>';
 			}
-
 		}
 	}
 
@@ -1005,7 +1052,14 @@ class MvcController
 		return number_format($respuesta["total"],"2",".",",");
 	}
 	
-	
+	##METODO PARA OBTENER SUS VENTAS DE UN CLIENTE EN SU MENU
+	public static function registrosVentasClienteController()
+	{
+		if (isset($_SESSION["id_usuario"])) {
+			$respuesta = Datos::registrosDelMesActualClienteModel("venta_cliente", $_SESSION["id_usuario"]);
+			return $respuesta;
+		}
+	}
 
 
 	
