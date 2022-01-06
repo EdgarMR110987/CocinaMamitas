@@ -94,6 +94,26 @@ class Datos extends Conexion{
 		$stmt->close();
 	}
 
+	#ACTUALIZAR USUARIO PERFIL CAJERO
+	#-------------------------------------
+	public static function actualizarUsuarioCajeroModel($datosModel, $tabla){
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET usuario=:usuario, contrasena=:contrasena, 
+				password=:password WHERE id_usuario=:id_usuario");
+        $contrasena =  password_hash($datosModel["contrasena"], PASSWORD_DEFAULT); //GENERAMOS HASH
+		$stmt->bindParam(":usuario", $datosModel["usuario"], PDO::PARAM_STR);
+        $stmt->bindParam(":contrasena", $datosModel["contrasena"], PDO::PARAM_STR);
+        $stmt->bindParam(":password", $contrasena, PDO::PARAM_STR);
+		$stmt->bindParam(":id_usuario", $datosModel["id_usuario"], PDO::PARAM_INT);
+		if($stmt->execute()){
+			return "success";
+		} else {
+            $error = $stmt->errorInfo();
+            return $error;
+		}
+		$stmt->close();
+	}
+	
+
 	#BORRAR REGISTRO GENERAL
 	#------------------------------------
 	public static function borrarFilaModel($datosModel, $tabla, $nombre_campo){
@@ -852,20 +872,19 @@ class Datos extends Conexion{
 	//PARTIDAS DE TODAS LAS VENTAS A MESAS AGRUPADAS PARA EL CORTE DE CAJA
 	public static function obtenerPartidasVentasMesasGralModel($tabla){
 		$hora_actual = date("H");
-		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 17){
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
 			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
 			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
 			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
 			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-			$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
 		}else{
 			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
 			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
 			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-			$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
 		}
-		
-	$stmt = Conexion::conectar()->prepare("SELECT SUM(cantidad_producto_partida_m) as cantidad, 
+		$stmt = Conexion::conectar()->prepare("SELECT SUM(cantidad_producto_partida_m) as cantidad, 
 				descripcion_p, precio_venta, sum(subtotal_partida_m) AS subtotal FROM $tabla 
 				LEFT JOIN productos ON id_producto = id_producto_partida_m
 				WHERE fecha_registro_partida_m >= :fecha_inicio_i AND
@@ -880,10 +899,19 @@ class Datos extends Conexion{
 
 	//PARTIDAS DE TODAS LAS VENTAS A MESAS AGRUPADAS PARA EL CORTE DE CAJA
 	public static function obtenerTotalPartidasVentasMesasGralModel($tabla){
-		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
-		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
-		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}
 		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida_m) AS total FROM $tabla 
 				LEFT JOIN productos ON id_producto = id_producto_partida_m
 				WHERE
@@ -932,11 +960,19 @@ class Datos extends Conexion{
 
 	//PARTIDAS DE TODAS LAS VENTAS A CLIENTES AGRUPADAS PARA EL CORTE DE CAJA
 	public static function obtenerPartidasVentasClientesGralModel($tabla){
-		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
-		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
-		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
-		$stmt = Conexion::conectar()->prepare("SELECT SUM(cantidad_producto_partida) as cantidad, 
+		$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}	$stmt = Conexion::conectar()->prepare("SELECT SUM(cantidad_producto_partida) as cantidad, 
 				descripcion_p, precio_venta, sum(subtotal_partida) AS subtotal FROM $tabla 
 				LEFT JOIN productos ON id_producto = id_producto_partida
 				WHERE fecha_registro_partida >= :fecha_inicio_i AND
@@ -951,14 +987,21 @@ class Datos extends Conexion{
 
 	//PARTIDAS DE TODAS LAS VENTAS A CLIENTES AGRUPADAS PARA EL CORTE DE CAJA
 	public static function obtenerTotalPartidasVentasClientesGralModel($tabla){
-		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
-		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
-		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
-		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+		$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}	$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
 				LEFT JOIN productos ON id_producto = id_producto_partida
 				WHERE
-
 					fecha_registro_partida >= :fecha_inicio_i
 				AND
 					fecha_registro_partida <= :fecha_termino_b");
@@ -972,11 +1015,19 @@ class Datos extends Conexion{
 
 	//OBTENER EL TOTAL DE LAS CUENTAS COBRADAS A CLIENTES DE SALDOS ANTERIORES PARA EL CORTE DE CAJA
 	public static function obtenerTotalSaldosCobradosVentasClientesGralModel($tabla){
-		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
-		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
-		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
-		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+		$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
 				LEFT JOIN productos ON id_producto = id_producto_partida
 				WHERE
 					estado_partida = 'cobrado'
@@ -993,11 +1044,19 @@ class Datos extends Conexion{
 
 	//TOTAL DE LAS VENTAS QUE SE PAGARON AL MOMENTO DE CLIENTES
 	public static function obtenerTotalCobradoVentasClientesDiaGralModel($tabla){
-		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
-		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
-		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
-		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+		$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}	$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
 				LEFT JOIN productos ON id_producto = id_producto_partida
 				WHERE
 					estado_partida = 'pagada'
@@ -1014,11 +1073,19 @@ class Datos extends Conexion{
 
 	//TOTAL DE LAS VENTAS A CUENTA DE CLIENTES
 	public static function obtenerTotalACuentaVentasClientesGralModel($tabla){
-		$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
-		$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
-		$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
-		$fecha_termino_b = $fecha_termino->format("Y-m-d 17:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
-		$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
+		$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}	$stmt = Conexion::conectar()->prepare("SELECT sum(subtotal_partida) AS total FROM $tabla 
 			LEFT JOIN productos ON id_producto = id_producto_partida
 			WHERE
 				estado_partida = 'pendiente'
