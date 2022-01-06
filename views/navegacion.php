@@ -7,6 +7,13 @@
         Usuarios
     </a>
     
+    <a href="index.php?action=Mesas/listadoMesas" class="navbar-brand">
+        <span>
+            <img class="img-auto" src="views/img/mesas.gif" alt="">
+        </span>
+        Mesas
+    </a>
+
     <a href="index.php?action=Productos/listadoProductos" class="navbar-brand">
         <span>
             <img class="img-auto" src="views/img/productos.gif" alt="">
@@ -19,13 +26,6 @@
             <img class="img-auto" src="views/img/ventas.gif" alt="">
         </span>
         Ventas
-    </a>
-    
-    <a href="index.php?action=Mesas/listadoMesas" class="navbar-brand">
-        <span>
-            <img class="img-auto" src="views/img/mesas.gif" alt="">
-        </span>
-        Mesas
     </a>
     
     <a href="index.php?action=Reportes/principalReportes" class="navbar-brand">
