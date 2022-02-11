@@ -22,7 +22,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <a class="btn btn-primary fs-2 fw-bold p-4 " href="index.php?action=Reportes/listadoVentasMesas">Total Ventas del Día
+            <a class="btn btn-primary fs-2 fw-bold p-4">Total Ventas del Día
             <br>
              <?php 
              $total = new MvcController();
@@ -32,7 +32,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <a class="btn btn-secondary text-white fs-2 fw-bold p-4" href="index.php?action=Reportes/listadoVentasMesas">Total Efectivo del Día
+            <a class="btn btn-secondary text-white fs-2 fw-bold p-4">Total Efectivo del Día
             <br>
              <?php 
              $total = new MvcController();
@@ -42,7 +42,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <a class="btn btn-warning text-white fs-2 fw-bold p-4" href="index.php?action=Reportes/listadoVentasMesas">Total Tarjeta del Día
+            <a class="btn btn-warning text-white fs-2 fw-bold p-4">Total Tarjeta del Día
             <br>
              <?php 
              $total = new MvcController();
@@ -52,7 +52,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <a class="btn btn-dark text-white fs-2 fw-bold p-4" href="index.php?action=Reportes/listadoVentasMesas">Total Cuenta del Día
+            <a class="btn btn-dark text-white fs-2 fw-bold p-4">Total Cuenta del Día
             <br>
              <?php 
              $total = new MvcController();
