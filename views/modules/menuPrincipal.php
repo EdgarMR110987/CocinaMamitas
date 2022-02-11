@@ -5,7 +5,7 @@
     <div class="contenedor">
         <div class="row pt-10">
             <div class="col-md-6">
-                <a class="btn-mesas" href="index.php?action=Ventas/ventaMesa">Mesas</a>
+                <a class="btn-mesas" href="index.php?action=menuVentasMesas">Mesas</a>
             </div>
             <div class="col-md-6">
                 <a class="btn-clientes" href="index.php?action=menuVentasClientes">Clientes</a>

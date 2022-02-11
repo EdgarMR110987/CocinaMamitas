@@ -51,6 +51,17 @@ class Datos extends Conexion{
 		$stmt->close();
 	}
 
+	 #VISTA DE USUARIOS PERFIL MESEROS
+	#-------------------------------------
+	public static function vistaUsuariosMeseroModel($tabla, $perfil){
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE perfil=:perfil");	
+		$stmt->bindParam(":perfil", $perfil, PDO::PARAM_STR);
+		$stmt->execute();
+		#fetchAll(): Obtiene todas las filas de un conjunto de resultados asociado al objeto PDOStatement. 
+		return $stmt->fetchAll();
+		$stmt->close();
+	}
+
     #EDITAR CUALQUIER DATO
 	#-------------------------------------
 	public static function editarGeneralModel($datosModel, $tabla, $columna){
@@ -178,13 +189,19 @@ class Datos extends Conexion{
 	#-------------------------------------
 	public static function registroProductoModel($datosModel, $tabla){
 		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla(descripcion_p, id_categoria_p, precio_compra,
-				precio_venta, foto_p, activo) VALUES(:descripcion_p, :id_categoria_p, :precio_compra,
-				:precio_venta, :foto_p, :activo)");	
+				precio_venta, precio_empleado, foto_p, activo) VALUES(:descripcion_p, :id_categoria_p, :precio_compra,
+				:precio_venta, :precio_empleado, :foto_p, :activo)");	
 		$stmt->bindParam(":descripcion_p", $datosModel["descripcion_p"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_categoria_p", $datosModel["id_categoria_p"], PDO::PARAM_INT);
         $stmt->bindParam(":precio_compra", $datosModel["precio_compra"], PDO::PARAM_STR);
         $stmt->bindParam(":precio_venta", $datosModel["precio_venta"], PDO::PARAM_STR);
-		$stmt->bindParam(":foto_p", $datosModel["foto_p"], PDO::PARAM_STR);
+		$stmt->bindParam(":precio_empleado", $datosModel["precio_empleado"], PDO::PARAM_STR);
+		if($datosModel["foto_p"] == null){
+			$vacio = "fotos/Productos/sin_imagen.png";
+			$stmt->bindParam(":foto_p", $vacio, PDO::PARAM_STR);
+		}else{
+			$stmt->bindParam(":foto_p", $datosModel["foto_p"], PDO::PARAM_STR);
+		}
 		$stmt->bindParam(":activo", $datosModel["activo"], PDO::PARAM_STR);
 		if($stmt->execute()){
 			return "success";
@@ -200,11 +217,12 @@ class Datos extends Conexion{
 	public static function actualizarProductoSFotoModel($datosModel, $tabla){
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET descripcion_p=:descripcion_p,
 				id_categoria_p = :id_categoria_p, precio_compra = :precio_compra, precio_venta =:precio_venta,
-				activo = :activo WHERE id_producto = :id_producto");	
+				precio_empleado = :precio_empleado, activo = :activo WHERE id_producto = :id_producto");	
 		$stmt->bindParam(":descripcion_p", $datosModel["descripcion_p"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_categoria_p", $datosModel["id_categoria_p"], PDO::PARAM_STR);
 		$stmt->bindParam(":precio_compra", $datosModel["precio_compra"], PDO::PARAM_STR);
 		$stmt->bindParam(":precio_venta", $datosModel["precio_venta"], PDO::PARAM_STR);
+		$stmt->bindParam(":precio_empleado", $datosModel["precio_empleado"], PDO::PARAM_STR);
 		$stmt->bindParam(":activo", $datosModel["activo"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_producto", $datosModel["id_producto"], PDO::PARAM_INT);  
         if($stmt->execute()){
@@ -221,11 +239,12 @@ class Datos extends Conexion{
 	public static function actualizarProductoCFotoModel($datosModel, $tabla){
 		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET descripcion_p=:descripcion_p,
 				id_categoria_p = :id_categoria_p, precio_compra = :precio_compra, precio_venta =:precio_venta,
-				foto_p = :foto_p, activo = :activo WHERE id_producto = :id_producto");	
+				:precio_empleado=:precio_empleado, foto_p = :foto_p, activo = :activo WHERE id_producto = :id_producto");	
 		$stmt->bindParam(":descripcion_p", $datosModel["descripcion_p"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_categoria_p", $datosModel["id_categoria_p"], PDO::PARAM_STR);
 		$stmt->bindParam(":precio_compra", $datosModel["precio_compra"], PDO::PARAM_STR);
 		$stmt->bindParam(":precio_venta", $datosModel["precio_venta"], PDO::PARAM_STR);
+		$stmt->bindParam(":precio_empleado", $datosModel["precio_empleado"], PDO::PARAM_STR);
 		$stmt->bindParam(":foto_p", $datosModel["foto_p"], PDO::PARAM_STR);
 		$stmt->bindParam(":activo", $datosModel["activo"], PDO::PARAM_STR);
 		$stmt->bindParam(":id_producto", $datosModel["id_producto"], PDO::PARAM_INT);  
@@ -484,7 +503,7 @@ class Datos extends Conexion{
 	#OBTENER EL PRECIO DEL PRODUCTO
 	#....................................................................................................
 	public static function obtenerPrecioProductoModel($tabla, $datosModel){
-		$stmt = Conexion::conectar()->prepare("SELECT precio_venta FROM $tabla 
+		$stmt = Conexion::conectar()->prepare("SELECT precio_venta, precio_empleado FROM $tabla 
 				WHERE id_producto = :id_producto");	
 		$stmt->bindParam(":id_producto", $datosModel["id_producto"], PDO::PARAM_INT);
 		$stmt->execute();
@@ -576,6 +595,17 @@ class Datos extends Conexion{
 		return $stmt->fetch();
 		$stmt->close();
 	}
+
+	public static function vistaVentasMesasPendienteModel($tabla, $datosModel){
+		$stmt = Conexion::conectar()->prepare("SELECT * FROM $tabla 
+				LEFT JOIN usuarios ON id_usuario = id_usuario_venta_m
+				WHERE estado_venta_m = :estado_venta_m");	
+		$stmt->bindParam(":estado_venta_m", $datosModel, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetchAll();
+		$stmt->close();
+		
+	}
 	
 
 	#INSERTAR PARTIDA NUEVA A VENTA DE MESA
@@ -641,10 +671,12 @@ class Datos extends Conexion{
 	#-------------------------------------------
 	public static function cambiarEstadoVentaMesaModel($datosModel, $tabla){
 		$update = Conexion::conectar()->prepare("UPDATE $tabla SET estado_venta_m = :estado_venta_m,
-					forma_pago_m = :forma_pago_m, imp_efectivo = :imp_efectivo, imp_tarjeta = :imp_tarjeta
+					forma_pago_m = :forma_pago_m, imp_efectivo = :imp_efectivo, imp_tarjeta = :imp_tarjeta,
+					total_venta_m = :total_venta_m
 					WHERE id_venta_m = :id_venta_m");
 		$update->bindParam(":estado_venta_m", $datosModel["estado_venta_m"], PDO::PARAM_STR);
 		$update->bindParam(":forma_pago_m", $datosModel["forma_pago_m"], PDO::PARAM_STR);
+		$update->bindParam(":total_venta_m", $datosModel["total_venta_m"], PDO::PARAM_STR);
 		$update->bindParam(":imp_efectivo", $datosModel["imp_efectivo"], PDO::PARAM_STR);
 		$update->bindParam(":imp_tarjeta", $datosModel["imp_tarjeta"], PDO::PARAM_STR);
 		$update->bindParam(":id_venta_m", $datosModel["id_venta_m"], PDO::PARAM_INT);
@@ -738,8 +770,7 @@ class Datos extends Conexion{
 	public static function registrosDelMesActualClienteModel($tabla, $id_cliente_venta_c){
 		$stmt = Conexion::conectar()->prepare("SELECT *, u1.usuario as vendedor FROM $tabla
 				LEFT JOIN usuarios u1 ON u1.id_usuario = id_usuario_venta_c
-				WHERE MONTH(fecha_venta_c) = MONTH(CURRENT_DATE())
-				AND YEAR(fecha_venta_c) = YEAR(CURRENT_DATE())
+				WHERE estado_venta_c = 'pendiente'
 				AND id_cliente_venta_c = :id_cliente_venta_c");
 		$stmt->bindParam(":id_cliente_venta_c", $id_cliente_venta_c, PDO::PARAM_INT);
 		$stmt->execute();
@@ -1100,10 +1131,136 @@ class Datos extends Conexion{
 		$stmt->close();
 	}
 
+	//SUMA DE LAS VENTAS A MESAS Y CLIENTES
+	public static function obtenerTotalVentasMesasDelDiaGralModel(){
+		$hora_actual = date("H");
+			if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+				$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+				$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+				$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+				$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+				$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			}else{
+				$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+				$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+				$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+				$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			}	$stmt = Conexion::conectar()->prepare("SELECT(
+					(SELECT IFNULL(SUM(total_venta_m), 0) FROM venta_mesa 
+						WHERE fecha_venta_m >= :fecha_inicio_i AND fecha_venta_m <= :fecha_termino_b)
+					+
+					(SELECT IFNULL(SUM(total_venta_c), 0) FROM venta_cliente 
+						WHERE fecha_venta_c >= :fecha_inicio_i AND fecha_venta_c <= :fecha_termino_b)
+					) AS total_ventas_grl_dia");
+			$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+			$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+			$stmt->execute();
+			return $stmt->fetch();
+			$stmt->close();
+		}
+
+	#ACTUALIZAR EL TOTAL DE UNA VENTA A MESA, CADA QUE BORRAMOS PARTIDAS
+	#............................................................................................
+	public static function actualizar_venta_mesa_Model($datosModel){
+		$update = Conexion::conectar()->prepare("UPDATE venta_mesa SET total_venta_m = :total_venta_m
+					WHERE id_venta_m = :id_venta_m");
+		$nvo_total = ($datosModel["total_venta"] - $datosModel["subtotal_p"]);
+		$update->bindParam(":total_venta_m", $nvo_total, PDO::PARAM_STR);
+		$update->bindParam(":id_venta_m", $datosModel["id_venta"], PDO::PARAM_INT);
+		if($update->execute()){
+			return "success";
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
 	
+	//OBTENER LA SUMA DE TODO EL EFECTIVO
+	public static function obtenerTotalEnEfectivoDiaGralModel(){
+	$hora_actual = date("H");
+		if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+			$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+			$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+			$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}else{
+			$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+			$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+			$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+			$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+		}	$stmt = Conexion::conectar()->prepare("SELECT(
+				(SELECT IFNULL(SUM(imp_efectivo), 0) FROM venta_mesa 
+					WHERE fecha_venta_m >= :fecha_inicio_i AND fecha_venta_m <= :fecha_termino_b)
+				+
+				(SELECT IFNULL(SUM(total_venta_c), 0) FROM venta_cliente 
+					WHERE forma_pago_venta_c = 'efectivo' AND fecha_venta_c >= :fecha_inicio_i 
+					AND fecha_venta_c <= :fecha_termino_b)
+				) AS total_ventas_grl_dia");
+		$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+		$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+		$stmt->execute();
+		return $stmt->fetch();
+		$stmt->close();
+	}
+
+	//OBTENER LA SUMA DE TODO LO PAGADO EN TARJETA
+	public static function obtenerTotalEnTarjetaDiaGralModel(){
+		$hora_actual = date("H");
+			if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+				$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+				$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+				$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+				$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+				$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			}else{
+				$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+				$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+				$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+				$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			}	$stmt = Conexion::conectar()->prepare("SELECT(
+					(SELECT IFNULL(SUM(imp_tarjeta), 0) FROM venta_mesa 
+						WHERE fecha_venta_m >= :fecha_inicio_i AND fecha_venta_m <= :fecha_termino_b)
+					+
+					(SELECT IFNULL(SUM(total_venta_c), 0) FROM venta_cliente 
+						WHERE forma_pago_venta_c = 'tarjeta' AND fecha_venta_c >= :fecha_inicio_i 
+						AND fecha_venta_c <= :fecha_termino_b)
+					) AS total_ventas_grl_dia");
+			$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+			$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+			$stmt->execute();
+			return $stmt->fetch();
+			$stmt->close();
+		}
+
+	//OBTENER LA SUMA DE TODO LO QUE SE FUE A CUENTA
+	public static function obtenerTotalAcuentaDiaGralModel(){
+		$hora_actual = date("H");
+			if(intval($hora_actual) >= 0 && intval($hora_actual) <= 10){
+				$fecha_inicio = new DATETIME(date("Y-m-d 18:00:00")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+				$fecha_inicio_in = date_add($fecha_inicio, date_interval_create_from_date_string("-1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO			
+				$fecha_inicio_i = $fecha_inicio_in->format("Y-m-d 18:00:00");
+				$fecha_termino = date_add($fecha_inicio_in, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+				$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			}else{
+				$fecha_inicio_i = date("Y-m-d 18:00:00"); //SE DEFINE LA HORA DE APERTURA
+				$fecha_inicio = new DATETIME(date("Y-m-d")); // SE CREA UNA FECHA PARA PODERLE AGREGAR UN DIA
+				$fecha_termino = date_add($fecha_inicio, date_interval_create_from_date_string("1 day")); // SE AGREGA UN DIA A LA FECHA DE INICIO
+				$fecha_termino_b = $fecha_termino->format("Y-m-d 10:00:00"); //SE DA SALIDA DE LA FECHA DE LIMITE AGREGANDO LA HORA DE TERMINO DEL TURNO
+			}	$stmt = Conexion::conectar()->prepare("SELECT IFNULL(SUM(total_venta_c), 0)  AS total_ventas_grl_dia
+						FROM venta_cliente 
+						WHERE forma_pago_venta_c = 'cuenta' AND fecha_venta_c >= :fecha_inicio_i 
+						AND fecha_venta_c <= :fecha_termino_b");
+			$stmt->bindParam(":fecha_inicio_i", $fecha_inicio_i, PDO::PARAM_STR);
+			$stmt->bindParam(":fecha_termino_b", $fecha_termino_b, PDO::PARAM_STR);
+			$stmt->execute();
+			return $stmt->fetch();
+			$stmt->close();
+		}
 
 
-
+		
+	
 	
 	
 	

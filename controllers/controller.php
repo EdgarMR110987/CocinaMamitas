@@ -103,6 +103,18 @@ class MvcController
 		return $respuesta;
 	}
 
+	#VISTA DE USUARIOS CON PERFIL DE MESERO
+	#------------------------------------
+
+	public static function vistaUsuariosMeseroController()
+	{
+		$respuesta = Datos::vistaUsuariosMeseroModel("usuarios","mesero");
+		echo "<option value='' selected disabled>Selecciona una mesero . . . </option>";
+		foreach ($respuesta as $value) {
+			echo "<option value='" . $value["id_usuario"] . "'>" . $value["usuario"] . "</option>";
+		}
+	}
+
 	#BORRAR USUARIO
 	#------------------------------------
 	public static function borrarRegistroController($tabla, $columna, $link)
@@ -115,7 +127,7 @@ class MvcController
 				"subtotal_p" => $_POST["subtotal_p"],
 				"total_venta" => $_POST["total_venta"],
 			);
-			$act_total_venta = Datos::actualizar_venta_Model($datosControllerUpdate);
+			$act_total_venta = Datos::actualizar_venta_mesa_Model($datosControllerUpdate);
 			if ($respuesta == "success") {
 				echo '<script>
                 var x = document.getElementById("openModalEliminar");
@@ -216,12 +228,12 @@ class MvcController
 		}
 	}
 
-	#VISTA DE MESAS
+	#VISTA DE MESAS PENDIENTES
 	#------------------------------------
 
-	public static function vistaMesasController()
+	public static function vistaVentasMesasPendienteController()
 	{
-		$respuesta = Datos::vistaGeneralTablaModel("mesas");
+		$respuesta = Datos::vistaVentasMesasPendienteModel("venta_mesa","abierta");
 		return $respuesta;
 	}
 
@@ -402,6 +414,7 @@ class MvcController
 				"id_categoria_p" => $_POST["id_categoria_p"],
 				"precio_compra" => $_POST["precio_compra"],
 				"precio_venta" => $_POST["precio_venta"],
+				"precio_empleado" => $_POST["precio_empleado"],
 				"activo" => $_POST["activo"],
 				"foto_p" => $ruta_archivo
 			);
@@ -449,11 +462,12 @@ class MvcController
 					"id_categoria_p" => $_POST["id_categoria_p"],
 					"precio_compra" => $_POST["precio_compra"],
 					"precio_venta" => $_POST["precio_venta"],
+					"precio_empleado" => $_POST["precio_empleado"],
 					"activo" => $_POST["activo"]
 				);
 				$respuesta = Datos::actualizarProductoSFotoModel($datosController, "productos");
 				if ($respuesta == "success") {
-					echo "<script>registroOK('" . $url . "');</script>";
+					echo "<script>actualizarOK('" . $url . "');</script>";
 				} else {
 					echo "<script>errorRegistro('" . $respuesta[2] . "','" . $url . "');</script>";
 				}
@@ -468,11 +482,12 @@ class MvcController
 					"id_categoria_p" => $_POST["id_categoria_p"],
 					"precio_compra" => $_POST["precio_compra"],
 					"precio_venta" => $_POST["precio_venta"],
+					"precio_empleado" => $_POST["precio_empleado"],
 					"activo" => $_POST["activo"]
 				);
 				$respuesta = Datos::actualizarProductoCFotoModel($datosController, "productos");
 				if ($respuesta == "success") {
-					echo "<script>registroOK('" . $url . "');</script>";
+					echo "<script>actualizarOK('" . $url . "');</script>";
 				} else {
 					echo "<script>errorRegistro('" . $respuesta[2] . "','" . $url . "');</script>";
 				}
@@ -644,7 +659,11 @@ class MvcController
 		if (isset($_POST["cant_partida_v"])) {
 			$datos = array("id_producto" => $_POST["id_prod_venta"]);
 			$precio_unitario = Datos::obtenerPrecioProductoModel("productos", $datos);
-			$sub_total_venta = ($precio_unitario["precio_venta"] * $_POST["cant_partida_v"]);
+			if($_POST["perfil"] == "cliente"){
+				$sub_total_venta = ($precio_unitario["precio_venta"] * $_POST["cant_partida_v"]);
+			}else{
+				$sub_total_venta = ($precio_unitario["precio_empleado"] * $_POST["cant_partida_v"]);
+			}
 			if($_POST["estado_venta_c"] == "pagada")
 				$estado_partida = "pagada";
 			else
@@ -691,17 +710,15 @@ class MvcController
 	#------------------------------------
 	public static function registroVentaMesaController()
 	{
-		if (isset($_POST["id_registro_borrar"])) {
+		if (isset($_POST["id_usuario_venta_m"])) {
 			$datosController = array(
-				"id_usuario_venta_m" => $_SESSION["id_usuario"],
-				"id_mesa_venta_m" => $_POST["id_registro_borrar"]
+				"id_usuario_venta_m" => $_POST["id_usuario_venta_m"],
+				"id_mesa_venta_m" => $_POST["id_mesa_venta_m"],
+				"forma_pago_m" => $_POST["forma_pago_m"],
+				"fecha_venta_m" => $_POST["fecha_venta_m"]
+
 			);
 			$respuesta = Datos::registroVentaMesaModel($datosController, "venta_mesa");
-			$datosController2 = array(
-				"id_mesa" => $_POST["id_registro_borrar"],
-				"estado" => "ocupado"
-			);
-			$respuesta2 = Datos::cambiarEstadoMesaModel($datosController2, "mesas");
 			$url = "index.php?action=Ventas/agregarProductoMesa&id_venta_m=" . $respuesta["id_venta_m"];
 			if (isset($respuesta["id_venta_m"])) {
 				echo '<script>
@@ -791,6 +808,7 @@ class MvcController
 				"id_venta_m" => $_POST["id_venta_m"],
 				"estado_venta_m" => "pagada",
 				"forma_pago_m" => $_POST["forma_pago_mesa"],
+				"total_venta_m" => $_POST["total_venta_m"],
 				"imp_efectivo" => $_POST["imp_efectivo"],
 				"imp_tarjeta" => $_POST["imp_tarjeta"]
 			);
@@ -828,7 +846,7 @@ class MvcController
 				echo '<script>
 						var x = document.getElementById("openModalEliminar");
 						x.style.display = "none";    
-						registroOK(' . "'" . $link . "'" . ');
+						borrarOk(' . "'" . $link . "'" . ');
 					</script>';
 			} else {
 				echo '<script> 
@@ -1062,7 +1080,40 @@ class MvcController
 	}
 
 
+	#OBTENER EL TOTAL DE LAS VENTAS GENERADAS DEL DIA A MESAS Y CLIENTES
+	#METODO PARA OBTENER EL TOTAL DE LO QUE SE LES COBRO A LOS CLIENTES DE CUENTAS PASADAS
+	#-----------------------------------------------
+	public static function obtenerTotalVentasMesasDelDiaGralController(){
+		$respuesta = Datos::obtenerTotalVentasMesasDelDiaGralModel();
+		return $respuesta;
+	}
 	
+	#OBTENER EL TOTAL DEL EFECTIVO DE MESAS Y CLIENTES
+	#-----------------------------------------------
+	public static function obtenerTotalEnEfectivoDiaGralController(){
+		$respuesta = Datos::obtenerTotalEnEfectivoDiaGralModel();
+		return $respuesta;
+	}
+
+	#OBTENER EL TOTAL DE LO PAGADO EN TARJETA DE MESAS Y CLIENTES
+	#-----------------------------------------------
+	public static function obtenerTotalEnTarjetaDiaGralController(){
+		$respuesta = Datos::obtenerTotalEnTarjetaDiaGralModel();
+		return $respuesta;
+	}
+
+	#OBTENER EL TOTAL DE LO PAGADO EN TARJETA DE MESAS Y CLIENTES
+	#-----------------------------------------------
+	public static function obtenerTotalAcuentaDiaGralController(){
+		$respuesta = Datos::obtenerTotalAcuentaDiaGralModel();
+		return $respuesta;
+	}
+
+
+	
+
+	
+
 
 		
 }

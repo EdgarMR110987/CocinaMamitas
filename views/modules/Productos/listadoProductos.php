@@ -44,6 +44,7 @@
                 <th scope="col">Categoria</th>
                 <th scope="col">$ Compra</th>
                 <th scope="col">$ Venta</th>
+                <th scope="col">$ Empleado</th>
                 <th scope="col">Foto</th>
                 <th scope="col">Activo</th>
                 <th scope="col">Editar</th>
@@ -62,6 +63,7 @@
                             <td>".$value["descripcion_cat"]."</td>
                             <td> $ ".$value["precio_compra"]."</td>
                             <td> $ ".$value["precio_venta"]."</td>
+                            <td> $ ".$value["precio_empleado"]."</td>
                             <td>
                                 <img id='myImg' class='img-50' src='".$value["foto_p"]."'>
                             </td>";

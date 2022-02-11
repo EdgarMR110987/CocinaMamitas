@@ -105,7 +105,7 @@
                             <td>".$value["imp_efectivo"]."</td>
                             <td>".$value["imp_tarjeta"]."</td>
                             <td>
-                                <a data-bs-toggle='modal' href='index.php?action=Ventas/editarVentaCliente&id_venta_editar=".$value["id_venta_m"]."' role='button'>
+                                <a data-bs-toggle='modal' href='index.php?action=Ventas/agregarProductoMesa&id_venta_m=".$value["id_venta_m"]."' role='button'>
                                     <img class='img-25' src='views/img/editar.png'>
                                 </a>
                             </td>

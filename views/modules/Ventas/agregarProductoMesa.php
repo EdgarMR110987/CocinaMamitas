@@ -11,10 +11,10 @@ $newDate = $datetime->format('H:i:s d-m-Y');
         <div class="container">
             <div class="row mb-3">
                 <div class="col-md-4">
-                    <h4 class="centrar">Atendido por : <?php $vistaVentaMesa->nombreUsuarioController($vistaVentaM["num_mesa"]); ?></h4>
+                    <h4 class="centrar">Atendido por : <?php $vistaVentaMesa->nombreUsuarioController($vistaVentaM["id_usuario_venta_m"]); ?></h4>
                 </div>
                 <div class="col-md-2">
-                    <h4 class="centrar">Mesa : <?php echo $vistaVentaM["num_mesa"]?></h4>
+                    <h4 class="centrar">Mesa : <?php echo $vistaVentaM["id_mesa_venta_m"]?></h4>
                     <input type="hidden" name="id_mesa_venta_m" id="id_mesa_venta_m" value="<?php echo $vistaVentaM["id_mesa_venta_m"]; ?>">
                 </div>
                 <div class="col-md-2">
@@ -182,3 +182,40 @@ $newDate = $datetime->format('H:i:s d-m-Y');
 
     </form>
     </div>
+
+ <!-- MODAL PARA ELIMINAR -->
+ <form class="form" action="" method="post">
+    <div id="openModalEliminar" class="modalDialog">
+        <div class="preguntar">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Borrando Producto</h5>
+                <a href="#close" title="Close" class="close">X</a>
+                <input type="hidden" name="id_registro_borrar" id="id_registro_borrar">
+                <input type="hidden" name="id_venta" id="id_venta">
+                <input type="hidden" name="subtotal_p" id="subtotal_p">
+                <input type="hidden" name="total_venta" id="total_venta">
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>¿Deseas Eliminar el Producto : &nbsp;</h6>
+                        <h6 id="os"></h6>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cerrar-modal">Salir</button>
+                <input class="btn btn-danger" type="submit" value="ELIMINAR">
+            </div>
+        </div>
+    </div>
+
+
+<!-- TERMINA EL MODAL PARA ELIMINAR -->
+
+<?php 
+    $eliminar = new MvcController();
+    $link = "index.php?action=Ventas/agregarProductoMesa&id_venta_m=".$_GET["id_venta_m"];
+    $eliminar -> borrarRegistroController("partida_venta_m","id_partida_venta_m", $link);
+?>
+</form>

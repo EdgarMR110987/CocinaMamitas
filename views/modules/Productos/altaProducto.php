@@ -59,6 +59,12 @@
         </div>
         <div class="row">
             <div class="col-md-2 derecha mb-3">
+                <span>$ Empleado : </span>
+            </div>
+            <div class="col-md-4 izqierda mb-3">
+                <input id="precio_empleado" class="input-form" type="number" step="0.10" placeholder="0.00" name="precio_empleado">
+            </div>
+            <div class="col-md-2 derecha mb-3">
                 <span>Vista Previa : </span>
             </div>
             <div class="col-md-4 centrar mt-4">

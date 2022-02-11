@@ -298,6 +298,10 @@ function clickactionEliminar(b) {
     document.getElementById('os').innerHTML = b.dataset.valor + "?";
 }
 
+function clickactionVentaNvaMesa(a){
+    document.getElementById('os').innerHTML = document.getElementById('id_mesa_venta_m').value + "?";
+}
+
 function cancelarPartida(a) {
     $.ajax({
         type: 'post',

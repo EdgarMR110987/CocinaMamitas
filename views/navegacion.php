@@ -6,14 +6,14 @@
         </span>
         Usuarios
     </a>
-    
+    <!-- SE ELIMINA LAS MESAS 
     <a href="index.php?action=Mesas/listadoMesas" class="navbar-brand">
         <span>
             <img class="img-auto" src="views/img/mesas.gif" alt="">
         </span>
         Mesas
     </a>
-
+    -->
     <a href="index.php?action=Productos/listadoProductos" class="navbar-brand">
         <span>
             <img class="img-auto" src="views/img/productos.gif" alt="">
