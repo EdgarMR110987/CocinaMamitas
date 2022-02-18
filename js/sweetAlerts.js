@@ -458,3 +458,29 @@ function corteDelDiaMesas(documento) {
 function corteDelDiaClientes(documento) {
     window.open('index.php?action=corteCajaClientes', 'Corte Clientes', 'width=350, height=600');
 }
+
+/*FUNCION PARA MOSTRAR LOS PRODUCTOS*/
+function mostrarProductos(b){
+    var dataen = 'id_categoria=' + b.id;
+    
+    $.ajax({
+        type:'post',
+        url:'views/modules/Ventas/obtenerProductosId.php',
+        data: dataen, 
+        dataType: "html",     
+        success: function(resp){      
+            $('#panel-categorias').css('display', 'none');      
+            $("#productos-id").html(resp);
+            $('#productos-id').css('display', 'flex');   
+        }
+    });
+    return false;
+}
+
+
+/*FUNCION PARA MOSTRAR LOS PRODUCTOS*/
+function agregarProductoVenta(b){
+    document.getElementById('id_prod_venta').value = b.dataset.id_prod;
+    $('#agregarProducto').submit(); 
+
+}

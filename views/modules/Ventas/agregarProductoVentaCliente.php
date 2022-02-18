@@ -2,7 +2,7 @@
     $Venta = new MvcController();
     $ultimo_registro_c = $Venta->vistaUltimaVentaClienteController();
 ?>
-<div class="container mt-6">
+<div class="container-fluid mt-6">
     <div class="row">
         <div class="col-md-2 derecha mb-1">
             <h3>Venta : <?php echo $ultimo_registro_c["id_venta_c"]; ?> </h3>
@@ -28,8 +28,8 @@
  
 
 
-<form action="" method="post">
-    <div class="container">
+<form action="" method="post" id="agregarProducto">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-1 derecha mb-5">
                 <span >Cant. : </span>
@@ -41,22 +41,22 @@
                 <input type="hidden" name="estado_venta_c" value="<?php echo $ultimo_registro_c["estado_venta_c"]; ?>">
                 <input class="input-form" min="1" value="1" type="number" name="cant_partida_v" id="cant_partida_v">
             </div>
-            <div class="col-md-4">                
-                <select class="input-form" name="id_prod_venta" id="id_prod_venta">
-                    <?php
-                        $Venta->vistaProductosSelectVentaController();
-                    ?>
-                </select>
-            </div>
+
             <div class="col-md-1 derecha mb-5">
                 <span >Coment. : </span>
             </div>
-            <div class="col-md-3 izquierda">
+            <div class="col-md-2 izquierda">
                 <input class="input-form" type="text" name="comentarios_partida" id="comentarios_partida">
             </div>
-            <div class="col-md-2">
-                <input type="submit" class="btn btn-success" value="Agregar">
+
+            <div id="panel-categorias" class="col-md-7">                
+                    <?php
+                        $Venta->vistaCategoriasVentaController();
+                    ?>
             </div>
+            <div id="productos-id" class="col-md-7">
+            </div>
+            <input type='hidden' name='id_prod_venta' id='id_prod_venta'>
         </div>
     </div>
     <?php

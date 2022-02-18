@@ -604,11 +604,18 @@ class MvcController
 		return $respuesta;
 	}
 
-	public static function vistaProductosSelectVentaController()
+	public static function vistaCategoriasVentaController()
 	{
-		$respuesta = Datos::vistaGeneralTablaModel("productos");
+		$respuesta = Datos::vistaGeneralTablaModel("categorias");
 		foreach ($respuesta as $key => $value) {
-			echo '<option value="' . $value["id_producto"] . '">' . $value["descripcion_p"] . '</option>';
+			echo '<a href="" id="' . $value['id_categoria'] . '" onclick="return mostrarProductos(this)">
+					<div class="card m-1 tarjeta">
+						<img src="'.$value["foto_cat"].'" class="card-img-top" alt="...">
+						<div class="card-body text-center">
+			  				<p class="card-title fs-8">'.$value["descripcion_cat"].'</p>
+						</div>
+		  			</div>
+				</a>';
 		}
 	}
 

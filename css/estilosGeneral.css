@@ -562,3 +562,25 @@ th.precio {
 .fs-7{
     font-size: 11px;
 }
+
+.fs-8{
+    font-size: 10px;
+}
+
+.tarjeta{
+    float: left;
+    width: 115px;
+    height: 140px;
+}
+
+@supports(object-fit: cover){
+    .tarjeta img{
+      height: 80px;
+      object-fit: cover;
+      object-position: center center;
+    }
+}
+
+.hand{
+    cursor: pointer;
+}
