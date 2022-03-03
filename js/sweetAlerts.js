@@ -116,16 +116,16 @@ $(document).ready(function () {
 
     if ($("#forma_pago_mesa").val() == 'Efectivo') {
         $(".efectivo").css('display', 'none');
-        $(".tarjeta").css('display', 'none');
+        $(".tarjeta_p").css('display', 'none');
         $("#imp_efectivo").val($("#total_venta_m").val());
         $("#imp_tarjeta").val("");
     } else if ($("#forma_pago_mesa").val() == 'Tarjeta') {
-        $(".tarjeta").css('display', 'none');
+        $(".tarjeta_p").css('display', 'none');
         $(".efectivo").css('display', 'none');
         $("#imp_efectivo").val("");
         $("#imp_tarjeta").val($("#total_venta_m").val());
     } else if ($("#forma_pago_mesa").val() == 'Mixta') {
-        $(".tarjeta").css('display', 'block');
+        $(".tarjeta_p").css('display', 'block');
         $(".efectivo").css('display', 'block');
         $("#imp_efectivo").val("");
         $("#imp_tarjeta").val("");
@@ -134,16 +134,16 @@ $(document).ready(function () {
     $("#forma_pago_mesa").change(function () {
         if ($("#forma_pago_mesa").val() == 'Efectivo') {
             $(".efectivo").css('display', 'none');
-            $(".tarjeta").css('display', 'none');
+            $(".tarjeta_p").css('display', 'none');
             $("#imp_efectivo").val($("#total_venta_m").val());
             $("#imp_tarjeta").val("");
         } else if ($("#forma_pago_mesa").val() == 'Tarjeta') {
-            $(".tarjeta").css('display', 'none');
+            $(".tarjeta_p").css('display', 'none');
             $(".efectivo").css('display', 'none');
             $("#imp_efectivo").val("");
             $("#imp_tarjeta").val($("#total_venta_m").val());
         } else if ($("#forma_pago_mesa").val() == 'Mixta') {
-            $(".tarjeta").css('display', 'block');
+            $(".tarjeta_p").css('display', 'block');
             $(".efectivo").css('display', 'block');
             $("#imp_efectivo").val("");
             $("#imp_tarjeta").val("");
@@ -457,6 +457,10 @@ function corteDelDiaMesas(documento) {
 
 function corteDelDiaClientes(documento) {
     window.open('index.php?action=corteCajaClientes', 'Corte Clientes', 'width=350, height=600');
+}
+
+function corteDelDiaGral(documento) {
+    window.open('index.php?action=corteCajaGeneral', 'Corte General', 'width=350, height=600');
 }
 
 /*FUNCION PARA MOSTRAR LOS PRODUCTOS*/

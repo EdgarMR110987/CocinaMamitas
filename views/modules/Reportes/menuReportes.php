@@ -17,6 +17,9 @@
         <div class="col-md-2">
             <a class="btn-update" onclick="corteDelDiaClientes()">Corte Caja Clientes</a>
         </div> 
+        <div class="col-md-2">
+            <a class="btn btn-primary" onclick="corteDelDiaGral()">Corte de Caja Gral.</a>
+        </div> 
     </div>
 </div>
 <div class="container">

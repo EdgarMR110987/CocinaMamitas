@@ -59,10 +59,10 @@ $newDate = $datetime->format('H:i:s d-m-Y');
                 <div class='col-md-2 efectivo'>
                     <input name="imp_efectivo" id="imp_efectivo" type='number' class='input-form'>
                 </div>
-                <div class='col-md-2 tarjeta'>
+                <div class='col-md-2 tarjeta_p'>
                     <h4 class="derecha">Imp. Tarjeta : </h4>
                 </div>
-                <div class='col-md-2 tarjeta'>
+                <div class='col-md-2 tarjeta_p'>
                     <input name="imp_tarjeta" id="imp_tarjeta" type='number' class='input-form'>
                 </div>
             </div>
@@ -91,8 +91,9 @@ $newDate = $datetime->format('H:i:s d-m-Y');
         
     <hr>
         
-    <form action="" method="post">
-        <input type="hidden" name="id_venta_m_p" value="<?php echo $vistaVentaM["id_venta_m"]; ?>">
+    <form action="" method="post" id="agregarProducto">
+        <div class="container-fluid">
+            <input type="hidden" name="id_venta_m_p" value="<?php echo $vistaVentaM["id_venta_m"]; ?>">
             <div class="row">
                 <div class="col-md-1 derecha mb-1">
                     <p class="mt-2">Cant. : </p>
@@ -100,29 +101,28 @@ $newDate = $datetime->format('H:i:s d-m-Y');
                 <div class="col-md-1 izquierda">
                     <input class="input-form" min="1" value="1" type="number" name="cant_prod_part_v_mesa" id="cant_prod_part_v_mesa">
                 </div>
-                <div class="col-md-4">                
-                    <select class="input-form" name="id_prod_part_v_mesa" id="id_prod_part_v_mesa">
-                        <?php
-                            $vista = new mvcController();
-                            $vista->vistaProductosSelectVentaController();
-                        ?>
-                    </select>
-                </div>
                 <div class="col-md-1 derecha mb-5">
                     <p class="mt-2">Coment. : </p>
                 </div>
-                <div class="col-md-3 izquierda">
+                <div class="col-md-2 izquierda">
                     <input class="input-form" type="text" name="comentarios_part_v_mesa" id="comentarios_part_v_mesa">
                 </div>
-                <div class="col-md-2">
-                    <input type="submit" class="btn btn-success" value="Agregar">
+
+                <div id="panel-categorias" class="col-md-7">                
+                    <?php
+                        $Pagar->vistaCategoriasVentaController();
+                    ?>
                 </div>
+                <div id="productos-id" class="col-md-7">
+                </div>
+                <input type='hidden' name='id_prod_part_v_mesa' id='id_prod_venta'>
             </div>
+        </div>
             <?php
                 $agregar = new MvcController();
                 $agregar->agregarNuevaPartidaVentaMesaController();
             ?>
-        </form>
+    </form>
 
     <!-- LISTA DE PRODUCTOS VENDIDOS -->
     <div class="container">

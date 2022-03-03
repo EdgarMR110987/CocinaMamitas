@@ -35,7 +35,7 @@
                 <span >Cant. : </span>
             </div>
             <div class="col-md-1 izquierda">
-            <input type="hidden" name="perfil" value="<?php echo $ultimo_registro_c["perfil"]; ?>">
+                <input type="hidden" name="perfil" value="<?php echo $ultimo_registro_c["perfil"]; ?>">
                 <input type="hidden" name="id_venta_agregar_p" id="id_venta_c" value="<?php echo $ultimo_registro_c["id_venta_c"]; ?>">
                 <input type="hidden" id="id_cliente_venta_c" value="<?php echo $ultimo_registro_c["id_usuario"]; ?>">
                 <input type="hidden" name="estado_venta_c" value="<?php echo $ultimo_registro_c["estado_venta_c"]; ?>">

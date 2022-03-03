@@ -1117,7 +1117,12 @@ class MvcController
 	}
 
 
-	
+	##METODO PARA OBTENER LAS PARTIDAS DE LAS VENTAS EN GENERAL
+	#-----------------------------------------------
+	public static function obtenerPartidasVentasGralController(){
+		$respuesta = Datos::obtenerPartidasVentasGralModel();
+		return $respuesta;
+	}
 
 	
 
