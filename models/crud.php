@@ -972,7 +972,7 @@ class Datos extends Conexion{
 
 	//METODO PARA COBRAR UN CUENTA
 	public static function actualizarEstadoVentaClientePagadaModel($tabla, $datosModel){
-		$update = Conexion::conectar()->prepare("UPDATE $tabla SET estado_venta_c = 'pagada'
+		$update = Conexion::conectar()->prepare("UPDATE $tabla SET estado_venta_c = 'pagada', update_venta_cliente = (SELECT NOW())
 					WHERE id_venta_c = :id_venta_c");
 		$update->bindParam(":id_venta_c", $datosModel["id_venta_c"], PDO::PARAM_INT);
 		if($update->execute()){
@@ -1294,10 +1294,87 @@ class Datos extends Conexion{
 		$stmt->close();
 	}
 
-		
-		
+	//METODO PARA ACTUALIZAR EL TOTAL DEL SALDO DE UN CLIENTE DE ACUERDO A LAS PARTIDAS PENDIENTES
 	
+	public static function actualizarSaldoClientePartidasModel($id_usuario){
+		$update = Conexion::conectar()->prepare("UPDATE usuarios 
+				SET saldo_actual = (SELECT SUM(subtotal_partida) 
+									FROM partida_venta_c 
+									LEFT JOIN venta_cliente c ON c.id_venta_c = id_venta_c_partida 
+									WHERE c.id_cliente_venta_c = :id_cliente_venta_c AND estado_partida = 'pendiente')
+				WHERE id_usuario = :id_usuario");
+		$update->bindParam(":id_cliente_venta_c", $id_usuario, PDO::PARAM_INT);
+		$update->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+		if($update->execute()){
+			return "success";
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}	
+
+	//METODO PARA CREAR UNA NUEVA PARTIDA DE ABONO A CUENTA
+	public static function nuevaPartidaAbonoModel($datosModel){
+		$nvaPartida = Conexion::conectar()->prepare("INSERT INTO abono_venta_cliente(id_venta_cliente, importe_abono, importe_anterior,
+					fecha_abono_venta) VALUES(:id_venta_cliente, :importe_abono, :importe_anterior, (SELECT NOW()) )");
+		$nvaPartida->bindParam(":id_venta_cliente", $datosModel["id_venta_cliente"], PDO::PARAM_INT);
+		$nvaPartida->bindParam(":importe_abono", $datosModel["importe_abono"], PDO::PARAM_STR);
+		$nvaPartida->bindParam(":importe_anterior", $datosModel["importe_anterior"], PDO::PARAM_STR);
+		if($nvaPartida->execute()){
+			return "success";
+		}else{
+			$error = $nvaPartida->errorInfo();
+			return $error;
+		}
+	}
+
+	//METODO PARA ACTUALIZAR EL SALDO DE LA VENTA CUANDO SE ABONE UNA PARTE
+	public static function actualizarNvoSaldoVentaClienteModel($datosModel){
+		$update = Conexion::conectar()->prepare("UPDATE venta_cliente SET nvo_saldo = :nvo_saldo, update_venta_cliente = (SELECT NOW())
+					WHERE id_venta_c = :id_venta_c");
+		$update->bindParam(":nvo_saldo", $datosModel["nvo_saldo"], PDO::PARAM_STR);
+		$update->bindParam(":id_venta_c", $datosModel["id_venta_c"], PDO::PARAM_INT);
+		if($update->execute()){
+			return "success";
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
 	
+	public static function obtenerFechaVentaClienteModel($id_venta_c){
+		$update = Conexion::conectar()->prepare("SELECT fecha_venta_c FROM venta_cliente WHERE id_venta_c = :id_venta_c");
+		$update->bindParam(":id_venta_c", $id_venta_c, PDO::PARAM_INT);
+		if($update->execute()){
+			return $update->fetch();
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
+
+	public static function obtenerSaldoClienteModel($id_usuario){
+		$update = Conexion::conectar()->prepare("SELECT saldo_actual FROM usuarios WHERE id_usuario = :id_usuario");
+		$update->bindParam(":id_usuario", $id_usuario, PDO::PARAM_INT);
+		if($update->execute()){
+			return $update->fetch();
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
+
+	public static function obtenerNvoSaldoVentaClienteModel($id_venta_c){
+		$update = Conexion::conectar()->prepare("SELECT nvo_saldo FROM venta_cliente WHERE id_venta_c = :id_venta_c");
+		$update->bindParam(":id_venta_c", $id_venta_c, PDO::PARAM_INT);
+		if($update->execute()){
+			return $update->fetch();
+		}else{
+			$error = $update->errorInfo();
+			return $error;
+		}
+	}
+
 	
 	
 }

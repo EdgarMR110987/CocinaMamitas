@@ -9,6 +9,17 @@ function registroOK(url) {
     });
 }
 
+function pagoOK(url) {
+    swal({
+        title: "Pago Exitoso",
+        text: "Se pago la cuenta " + url,
+        type: "success",
+        timer: 5000
+    });
+}
+
+
+
 function actualizarOK(url) {
     swal({
         title: "Actualizacion Correcta",
@@ -486,5 +497,66 @@ function mostrarProductos(b){
 function agregarProductoVenta(b){
     document.getElementById('id_prod_venta').value = b.dataset.id_prod;
     $('#agregarProducto').submit(); 
+}
 
+function calcular(a){
+    var lstNumero = document.getElementsByClassName("array_importes");
+    var imp_abono = document.getElementById("importe_abono").value;
+    var id_usuario = document.getElementById("id_usuario").value;
+    let ventas = []; let importes = []; let abonos = [];
+    for (var i = 0; i < lstNumero.length; i++) {   
+        if(imp_abono > 0){
+            if(lstNumero[i].dataset.saldo_ant === ""){ //VALIDAMOS SI EL IMPORTE DE SALDO ANTERIOR ES NULL
+            
+                if(imp_abono >= lstNumero[i].dataset.importe){ //VALIDAMOS SI EL IMPORTE ES IGUAL A LA CUENTA O MAYOR           
+                    alert("COMPLETA");
+                    $.ajax({
+                        type:'post',
+                        url:'views/modules/Reportes/pagarCuentaCompleta.php',
+                        data: { "id_venta_cobrar": lstNumero[i].value, "total_venta": lstNumero[i].dataset.importe, "id_usuario": id_usuario}, 
+                        dataType: "html",     
+                        success: function(resp){      }
+                    });
+                    imp_abono = imp_abono - lstNumero[i].dataset.importe;
+                    ventas[i] = lstNumero[i].value;
+                    importes[i] = lstNumero[i].dataset.importe;
+                    abonos[i] = lstNumero[i].dataset.importe;
+                }else{
+                    alert("ABONO");
+                    $.ajax({
+                        type: 'POST',
+                        url: 'views/modules/Reportes/abonarCuenta.php',
+                        data: { "id_venta_cliente": lstNumero[i].value, "imp_abono": imp_abono, "id_usuario": id_usuario, "saldo_anterior": lstNumero[i].dataset.importe},
+                        dataType: 'html',
+                        success: function(resp){}
+                    });
+                    abonos[i] = imp_abono;
+                    imp_abono = imp_abono - lstNumero[i].dataset.importe;
+                    ventas[i] = lstNumero[i].value;
+                    importes[i] = lstNumero[i].dataset.importe;
+                }
+            }else{ 
+                alert("COMPLETA - ABONO");
+                $.ajax({
+                    type:'post',
+                    url:'views/modules/Reportes/pagarPendienteCuenta.php',
+                    data: { "id_venta_cobrar": lstNumero[i].value, "total_venta": lstNumero[i].dataset.saldo_ant, "id_usuario": id_usuario}, 
+                    dataType: "html",     
+                    success: function(resp){}
+                });
+                abonos[i] = lstNumero[i].dataset.saldo_ant;
+                imp_abono = imp_abono - lstNumero[i].dataset.saldo_ant;
+                ventas[i] = lstNumero[i].value;
+                importes[i] = lstNumero[i].dataset.importe;
+                alert("Restan " + imp_abono);
+            }
+        }else{}
+    }
+    var ventana =  window.open('index.php?action=abonoCuenta&array_venta='+ btoa(JSON.stringify(ventas))+'&array_importes=' + btoa(JSON.stringify(importes)) + '&array_abonos=' + btoa(JSON.stringify(abonos)) + '&id_usuario=' + btoa(id_usuario), 'Corte Mesas', 'width=350, height=600');
+    ventana.onload = function() {
+        // Ya se cargó la página y se puede asignar el evento final
+        ventana.onunload = function() {
+            window.location.reload();
+        }
+    }
 }

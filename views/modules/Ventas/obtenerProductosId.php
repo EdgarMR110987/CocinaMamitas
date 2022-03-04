@@ -14,7 +14,7 @@ if ($resultado = $con->query($consulta)) {
         $foto_p =  $fila[3];
         $id_categoria = $fila[4];
 
-        echo    "<a class='hand' data-id_prod='$id_producto'  data-precio='$precio_venta' onclick='return agregarProductoVenta(this)'>
+        echo    "<a class='hand' data-id_prod='$id_producto'  data-precio='$precio_venta' onclick='return agregarProductoVenta(this);'>
                     <div class='card m-1 tarjeta'>
                         <img class='card-img-top' src='". $foto_p. "'>
                         <div class='card-body text-center'>

@@ -127,6 +127,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Borrando Producto</h5>
                 <a href="#close" title="Close" class="close">X</a>
                 <input type="hidden" name="id_registro_borrar" id="id_registro_borrar">
+                <input type="hidden" name="id_cliente_venta_c" id="id_cliente_venta_c" value="<?php echo $ultimo_registro_c["id_usuario"]; ?>">
                 <input type="hidden" name="id_venta" id="id_venta">
                 <input type="hidden" name="subtotal_p" id="subtotal_p">
                 <input type="hidden" name="total_venta" id="total_venta">

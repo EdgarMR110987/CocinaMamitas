@@ -18,7 +18,7 @@ class Paginas{
             || $enlaces == "Reportes/listadoVentasClientes" || $enlaces == "Reportes/detalleVentasCliente"
             || $enlaces == "Configuracion/parametros" || $enlaces == "ticket" || $enlaces == "ticketCliente"
             || $enlaces == "corteDelDia" || $enlaces == "corteCajaClientes" || $enlaces == "menuVentasMesas"
-            || $enlaces == "Ventas/listadoVentasMesas" || $enlaces == "corteCajaGeneral"){
+            || $enlaces == "Ventas/listadoVentasMesas" || $enlaces == "corteCajaGeneral" || $enlaces == "abonoCuenta"){
 			    $module =  "views/modules/".$enlaces.".php";
             }else if($enlaces == "index"){
 	    		$module =  "views/modules/Usuarios/acceso.php";
