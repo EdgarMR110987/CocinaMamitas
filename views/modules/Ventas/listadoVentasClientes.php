@@ -36,13 +36,17 @@
                             <td>
                                 <span class='".$value["estado_venta_c"]."'>".strtoupper($value["estado_venta_c"])."</span>
                             </td>
-                            <td>".$value["comentarios_venta_c"]."</td>
-                            <td>
+                            <td>".$value["comentarios_venta_c"]."</td>";
+                            if($value["estado_venta_c"] == "pagada"){
+                                echo "<td></td>";
+                            }else{
+                        echo "<td>
                                 <a data-bs-toggle='modal' href='index.php?action=Ventas/editarVentaCliente&id_venta_editar=".$value["id_venta_c"]."' role='button'>
                                     <img class='img-25' src='views/img/editar.png'>
                                 </a>
-                            </td>
-                            <td>
+                            </td>";
+                            }
+                        echo "<td>
                                 <a href='#openModalEliminar' onclick='clickactionEliminar(this)' id='".$value["id_venta_c"]."' data-valor='".$value["id_venta_c"]."'>
                                     <img class='img-25' src='views/img/eliminar.png'>
                                 </a>

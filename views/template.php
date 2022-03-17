@@ -30,7 +30,7 @@
                     echo "</section>";
                     include "footer.php";
                     break;
-                case "cajero";
+                case "cajero"; case "mesero";
                     if (isset($_SESSION["id_usuario"]))
                     include "views/navegacion.php";
                     $mvc = new MvcController();

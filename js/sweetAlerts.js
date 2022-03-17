@@ -560,3 +560,33 @@ function calcular(a){
         }
     }
 }
+
+
+
+function imprimirCliente(event) {
+    event.preventDefault();
+    swal({
+        title: "¿Deseas Imprimir el ticket?",
+        text: "",
+        type: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#198754",
+        confirmButtonText: "Imprimir",
+        closeOnClickOutside: false,
+        closeOnEsc: false,
+        allowOutsideClick: false,
+    }).then(function (result) {
+        if (result.value) {
+            ticketCliente();
+            location.href = "index.php?action=Clientes/listadoVentasCliente";
+        } else {
+            swal({
+                title: "Cancelado",
+                text: "Sigamos trabajando",
+                type: "error",
+                timer: 2000
+            });
+        }
+    });
+}

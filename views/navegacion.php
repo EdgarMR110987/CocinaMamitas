@@ -1,11 +1,14 @@
 <nav class="navbar fixed-top navbar-dark bg-dark pt-0 pb-0">
-
+    <?php 
+    if($_SESSION["perfil"]=="administrador"){
+    ?>
     <a href="index.php?action=Usuarios/listadoUsuarios" class="navbar-brand">
         <span>
             <img class="img-auto" src="views/img/usuario.gif" alt="">
         </span>
         Usuarios
     </a>
+    <?php }else{} ?>
     <!-- SE ELIMINA LAS MESAS 
     <a href="index.php?action=Mesas/listadoMesas" class="navbar-brand">
         <span>

@@ -19,12 +19,12 @@
                     <th scope="col">Fecha</th>
                     <th scope="col">Total</th>
                     <th scope="col">Estado</th>
-                    <th scope="col">Imprimir</th>
                     <th scope="col">Detalle</th>
                 </tr>
             </thead>
             <tbody id="tabla_ventas_mesas">
             <?php
+            
                 foreach ($vista as $usuario => $value) {
                     echo "<tr>
                             <td>".$value["id_venta_c"]."</td>
@@ -35,10 +35,6 @@
                             <td>
                                 <span class='".$value["estado_venta_c"]."'>".strtoupper($value["estado_venta_c"])."</span>
                             </td>
-                            <td>
-                                <a data-bs-toggle='modal' href='index.php?action=Ventas/editarVentaCliente&id_venta_editar=".$value["id_venta_c"]."' role='button'>
-                                    <img class='img-25' src='views/img/imprimir.gif'>
-                                </a>
                             <td>
                                 <a data-bs-toggle='modal' href='index.php?action=Clientes/detalleVentaCliente&id_venta_editar=".$value["id_venta_c"]."' role='button'>
                                     <img class='img-25' src='views/img/detalle.gif'>

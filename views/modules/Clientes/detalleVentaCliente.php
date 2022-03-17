@@ -11,6 +11,7 @@ $datos_venta = $editarVenta->editarVentaClienteController();
 
 <div class="container mt-6">
     <h4 class="mb-3 centrar"># VENTA <?php echo $datos_venta["id_venta_c"]; ?> </h4>
+    <input type="hidden" name="id_venta_c" id="id_venta_c" value="<?php echo $datos_venta["id_venta_c"]; ?>">
     <div class="row">
         <div class="col-md-2 derecha mb-3">
             <span>Fecha : </span>
@@ -97,6 +98,6 @@ $datos_venta = $editarVenta->editarVentaClienteController();
 </div>
 <div class="row">
     <div class="col-md-12 centrar mt-4">
-        <input type="button" onclick="imprimir(event)" class="btn btn-outline-info btn-lg" value="Imprimir">
+        <input type="button" onclick="imprimirCliente(event)" class="btn btn-outline-info btn-lg" value="Imprimir">
     </div>
 </div>

@@ -36,7 +36,8 @@ class Paginas{
 
     public static function enlacesPaginasClienteModel($enlaces){
         if(isset($_SESSION["autentificado"]) == "SI"){
-		    if($enlaces == "Clientes/listadoVentasCliente" || $enlaces == "Clientes/detalleVentaCliente"){
+		    if($enlaces == "Clientes/listadoVentasCliente" || $enlaces == "Clientes/detalleVentaCliente" 
+            || $enlaces == "Clientes/detalleVentaCliente" || $enlaces == "ticketCliente"){
 			    $module =  "views/modules/".$enlaces.".php";
             }else if($enlaces == "index"){
 	    		$module =  "views/modules/Clientes/listadoVentasCliente";

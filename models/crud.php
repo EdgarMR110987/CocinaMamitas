@@ -770,8 +770,7 @@ class Datos extends Conexion{
 	public static function registrosDelMesActualClienteModel($tabla, $id_cliente_venta_c){
 		$stmt = Conexion::conectar()->prepare("SELECT *, u1.usuario as vendedor FROM $tabla
 				LEFT JOIN usuarios u1 ON u1.id_usuario = id_usuario_venta_c
-				WHERE estado_venta_c = 'pendiente'
-				AND id_cliente_venta_c = :id_cliente_venta_c");
+				WHERE  id_cliente_venta_c = :id_cliente_venta_c");
 		$stmt->bindParam(":id_cliente_venta_c", $id_cliente_venta_c, PDO::PARAM_INT);
 		$stmt->execute();
 		return $stmt->fetchAll();

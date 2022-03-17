@@ -69,11 +69,11 @@
         <div class="row">
             <div class="col-md-1 tabla-partida ocultar">ID Partida</div>
             <div class="col-md-1 tabla-partida">Cant.</div>
-            <div class="col-md-2 tabla-partida">Descripción</div>
+            <div class="col-md-3 tabla-partida">Descripción</div>
             <div class="col-md-2 tabla-partida">Subtotal</div>
             <div class="col-md-3 tabla-partida">Comentarios</div>
             <div class="col-md-1 tabla-partida">Estado</div>
-            <div class="col-md-1 tabla-partida">Editar</div>
+            
             <div class="col-md-1 tabla-partida">Cancelar</div>
             <div class="col-md-1 tabla-partida">Eliminar</div>
         </div>
@@ -84,15 +84,11 @@
                 echo '  <div class="row">
                             <div class="col-md-1 tabla-td-partida ocultar">'. $value["id_partida_venta_c"] .'</div>
                             <div class="col-md-1 tabla-td-partida">'. $value["cantidad_producto_partida"].'</div>
-                            <div class="col-md-2 tabla-td-partida">'. $value["descripcion_p"].'</div>
+                            <div class="col-md-3 tabla-td-partida">'. $value["descripcion_p"].'</div>
                             <div class="col-md-2 tabla-td-partida">'. $value["subtotal_partida"].'</div>
                             <div class="col-md-3 tabla-td-partida">'. $value["comentarios_partida"].'</div>
                             <div class="col-md-1 tabla-td-partida">'. $value["estado_partida"].'</div>
-                            <div class="col-md-1 tabla-td-partida">
-                                <a href="#exampleModal">
-                                    <img class="img-25" src="views/img/editar.png">
-                                </a>
-                            </div>
+                           
                             <div class="col-md-1 tabla-td-partida">';
                                 if($value["estado_partida"] != 'cancelado')
                         echo    '<a href="#" onclick="cancelarPartida(this)" id="'.$value["id_partida_venta_c"].'" class="btn btn-danger" data-subtotal_p="'.$value["subtotal_partida"].'" data-id_venta="'.$value["id_venta_c_partida"].'" data-total_venta="'.$ultimo_registro_c["total_venta_c"].'">
